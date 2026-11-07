@@ -12,171 +12,118 @@
             --plus-color: #2ecc71;
             --minus-color: #e74c3c;
             --text-color: #2b2d42;
+            --gold: #f39c12;
         }
 
-        * {
-            box-sizing: border-box;
-            font-family: 'Montserrat', sans-serif;
-        }
+        * { box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
 
         body {
             background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
             color: var(--text-color);
-            margin: 0;
-            padding: 40px 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            margin: 0; padding: 40px 20px;
+            display: flex; flex-direction: column; align-items: center;
             min-height: 100vh;
         }
 
         .container {
-            background: white;
-            width: 100%;
-            max-width: 800px;
-            border-radius: 20px;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
-            padding: 30px;
-            overflow: hidden;
+            background: white; width: 100%; max-width: 850px;
+            border-radius: 20px; box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            padding: 30px; overflow: hidden;
         }
 
         h1 {
-            text-align: center;
-            font-size: 36px;
-            font-weight: 800;
-            color: var(--primary);
-            margin-top: 0;
-            margin-bottom: 25px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+            text-align: center; font-size: 36px; font-weight: 800;
+            color: var(--primary); margin-top: 0; margin-bottom: 25px;
+            text-transform: uppercase; letter-spacing: 2px;
         }
 
         table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-            border-radius: 10px;
-            overflow: hidden;
+            width: 100%; border-collapse: collapse; margin-bottom: 20px;
+            border-radius: 10px; overflow: hidden;
             box-shadow: 0 0 10px rgba(0,0,0,0.05);
         }
 
-        th {
-            background-color: var(--primary);
-            color: white;
-            font-weight: 600;
-            padding: 15px;
-            text-align: left;
-            font-size: 16px;
-        }
-
-        th:nth-child(1) { width: 25%; }
+        th { background-color: var(--primary); color: white; font-weight: 600; padding: 15px; text-align: left; font-size: 16px; }
+        th:nth-child(1) { width: 20%; }
         th:nth-child(2) { width: 15%; }
         th:nth-child(3) { width: 15%; }
-        th:nth-child(4) { width: 45%; }
+        th:nth-child(4) { width: 50%; }
 
         td {
-            padding: 12px 15px;
-            border-bottom: 1px solid #e0e0e0;
-            font-weight: 600;
-            background: white;
-            transition: background 0.2s;
+            padding: 12px 15px; border-bottom: 1px solid #e0e0e0;
+            font-weight: 600; background: white; transition: background 0.2s;
         }
 
-        /* Стили для редактирования */
         td[contenteditable="true"]:focus {
-            outline: none;
-            background-color: #f0f8ff;
+            outline: none; background-color: #f0f8ff;
             box-shadow: inset 0 0 5px rgba(67, 97, 238, 0.3);
         }
 
-        /* Цвета для плюсов и минусов */
         td.income-text { color: var(--plus-color); }
         td.expense-text { color: var(--minus-color); }
+        tr:hover td { background-color: #f9f9f9; }
 
-        /* Подсветка строки при наведении */
-        tr:hover td {
-            background-color: #f9f9f9;
-        }
-        
-        /* Убираем стрелочки у инпутов чисел */
-        input[type=number]::-webkit-inner-spin-button, 
-        input[type=number]::-webkit-outer-spin-button { 
-            -webkit-appearance: none; 
-            margin: 0; 
-        }
-
-        .controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 20px;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
+        .controls { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; flex-wrap: wrap; gap: 15px; }
 
         .btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 4px 6px rgba(67, 97, 238, 0.3);
-            transition: all 0.2s;
+            background: var(--primary); color: white; border: none; padding: 12px 25px;
+            border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer;
+            box-shadow: 0 4px 6px rgba(67, 97, 238, 0.3); transition: all 0.2s;
         }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(67, 97, 238, 0.4); }
+        .btn:active { transform: translateY(0); }
+        .btn.danger { background: #ff4757; box-shadow: 0 4px 6px rgba(255, 71, 87, 0.3); }
+        .btn.danger:hover { box-shadow: 0 6px 12px rgba(255, 71, 87, 0.4); }
 
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(67, 97, 238, 0.4);
-        }
-
-        .btn:active {
-            transform: translateY(0);
-        }
-
-        .btn.danger {
-            background: #ff4757;
-            box-shadow: 0 4px 6px rgba(255, 71, 87, 0.3);
-        }
-
-        .btn.danger:hover {
-            box-shadow: 0 6px 12px rgba(255, 71, 87, 0.4);
-        }
-
-        /* Блок с итогами */
         .totals {
-            display: flex;
-            justify-content: space-around;
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 15px;
-            margin-top: 20px;
-            border: 2px dashed #dcdcdc;
+            display: flex; justify-content: space-around; background: #f8f9fa;
+            padding: 20px; border-radius: 15px; margin-top: 20px;
+            border: 2px dashed #dcdcdc; flex-wrap: wrap; gap: 10px;
         }
-
-        .total-item {
-            text-align: center;
-        }
-
-        .total-label {
-            font-size: 14px;
-            color: #888;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 5px;
-        }
-
-        .total-value {
-            font-size: 28px;
-            font-weight: 800;
-        }
-
+        .total-item { text-align: center; min-width: 100px; }
+        .total-label { font-size: 14px; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+        .total-value { font-size: 28px; font-weight: 800; }
         .value-plus { color: var(--plus-color); }
         .value-minus { color: var(--minus-color); }
         .value-balance { color: var(--primary); }
 
+        .extra-stats {
+            display: flex; justify-content: space-between; background: #e6e9f0;
+            padding: 15px 20px; border-radius: 10px; margin-top: 15px;
+            font-size: 16px; font-weight: 600; color: #555;
+        }
+        .stat-item span { font-weight: 800; color: var(--primary); font-size: 18px;}
+
+        /* --- БЛОК КАЛЬКУЛЯТОРА ПРОЦЕНТОВ --- */
+        .calc-box {
+            background: #fff9e6; border: 3px solid var(--gold);
+            border-radius: 15px; padding: 20px; margin-top: 30px;
+        }
+        .calc-box h3 { margin-top: 0; color: #d35400; text-align: center; font-size: 22px;}
+        .calc-inputs { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-bottom: 15px;}
+        .calc-inputs input {
+            padding: 12px; border-radius: 10px; border: 2px solid #ccc;
+            font-size: 18px; font-weight: 600; width: 200px; outline: none;
+        }
+        .calc-inputs input:focus { border-color: var(--gold); }
+        .calc-btn {
+            background: var(--gold); color: white; border: none; padding: 12px 30px;
+            border-radius: 10px; font-size: 18px; font-weight: 800; cursor: pointer;
+            box-shadow: 0 4px 0 #b8730d; transition: 0.1s; display: block; margin: 0 auto;
+        }
+        .calc-btn:active { transform: translateY(4px); box-shadow: none; }
+        
+        .calc-results {
+            display: none; margin-top: 20px; background: white; padding: 15px;
+            border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            text-align: center; font-size: 18px; line-height: 1.6;
+        }
+        .calc-results span { font-weight: 800; color: var(--plus-color); }
+
+        @media (max-width: 600px) {
+            .totals, .extra-stats { flex-direction: column; text-align: center; gap: 15px; }
+            .calc-inputs input { width: 100%; }
+        }
     </style>
 </head>
 <body>
@@ -193,9 +140,7 @@
                     <th>Комментарий</th>
                 </tr>
             </thead>
-            <tbody id="table-body">
-                <!-- Строки будут добавляться через JavaScript -->
-            </tbody>
+            <tbody id="table-body"></tbody>
         </table>
 
         <div class="controls">
@@ -217,142 +162,165 @@
                 <div class="total-value value-balance" id="total-balance">0</div>
             </div>
         </div>
+
+        <div class="extra-stats">
+            <div class="stat-item">📝 Всего записей: <span id="total-records">0</span></div>
+            <div class="stat-item">🧮 Сумма всех чисел: <span id="total-all-numbers">0</span></div>
+        </div>
+
+        <!-- НОВЫЙ БЛОК: УМНЫЙ КАЛЬКУЛЯТОР -->
+        <div class="calc-box">
+            <h3>📈 Калькулятор «Копилка под %»</h3>
+            <p style="text-align: center; margin-top: 0; font-size: 14px; color: #666;">Узнай, сколько накопится, если вкладывать под процент.</p>
+            
+            <div class="calc-inputs">
+                <input type="number" id="calc-sum" placeholder="Сумма (например, 10000)" min="0">
+                <input type="number" id="calc-percent" placeholder="% в месяц (например, 10)" min="0">
+            </div>
+            <button class="calc-btn" onclick="calculatePercent()">Посчитать!</button>
+
+            <!-- Сюда выведутся результаты -->
+            <div class="calc-results" id="calc-results">
+                Через 1 месяц: <span id="res-1m">0</span> ₽<br>
+                Через 3 месяца: <span id="res-3m">0</span> ₽<br>
+                Через 6 месяцев: <span id="res-6m">0</span> ₽<br>
+                Через 1 год: <span id="res-1y">0</span> ₽
+            </div>
+        </div>
     </div>
 
     <script>
         const tableBody = document.getElementById('table-body');
 
-        // Функция создания одной пустой строки
         function createRow(data = { date: '', income: '', expense: '', comment: '' }) {
             const tr = document.createElement('tr');
             
-            // Ячейка Дата
             const tdDate = document.createElement('td');
-            tdDate.contentEditable = "true";
-            tdDate.textContent = data.date;
+            tdDate.contentEditable = "true"; tdDate.textContent = data.date;
             
-            // Ячейка Доход (+)
             const tdIncome = document.createElement('td');
-            tdIncome.contentEditable = "true";
-            tdIncome.textContent = data.income;
-            tdIncome.classList.add('income-text');
+            tdIncome.contentEditable = "true"; tdIncome.textContent = data.income; tdIncome.classList.add('income-text');
             
-            // Ячейка Расход (-)
             const tdExpense = document.createElement('td');
-            tdExpense.contentEditable = "true";
-            tdExpense.textContent = data.expense;
-            tdExpense.classList.add('expense-text');
+            tdExpense.contentEditable = "true"; tdExpense.textContent = data.expense; tdExpense.classList.add('expense-text');
             
-            // Ячейка Комментарий
             const tdComment = document.createElement('td');
-            tdComment.contentEditable = "true";
-            tdComment.textContent = data.comment;
+            tdComment.contentEditable = "true"; tdComment.textContent = data.comment;
 
-            // Собираем строку
-            tr.appendChild(tdDate);
-            tr.appendChild(tdIncome);
-            tr.appendChild(tdExpense);
-            tr.appendChild(tdComment);
+            tr.appendChild(tdDate); tr.appendChild(tdIncome); tr.appendChild(tdExpense); tr.appendChild(tdComment);
 
-            // Добавляем обработчики событий для пересчета при вводе текста
             tdIncome.addEventListener('input', calculateTotals);
             tdExpense.addEventListener('input', calculateTotals);
+            tdDate.addEventListener('input', calculateTotals);
+            tdComment.addEventListener('input', calculateTotals);
 
             tableBody.appendChild(tr);
         }
 
-        // Добавить новую строку вручную (кнопка)
-        function addRow() {
-            createRow();
-            saveData();
-        }
+        function addRow() { createRow(); saveData(); }
 
-        // Очистить всю таблицу
         function clearTable() {
-            if (confirm("Ты точно хочешь удалить все записи? Это действие нельзя отменить!")) {
+            if (confirm("Удалить все записи?")) {
                 tableBody.innerHTML = '';
-                addRow(); // Добавляем одну пустую для красоты
-                saveData();
+                addRow(); saveData();
             }
         }
 
-        // Функция подсчета итогов
         function calculateTotals() {
-            let totalIncome = 0;
-            let totalExpense = 0;
-
-            // Проходимся по всем строкам таблицы
+            let totalIncome = 0, totalExpense = 0, totalRecords = 0, totalAllNumbers = 0;
             const rows = tableBody.querySelectorAll('tr');
             
             rows.forEach(row => {
-                const incomeCell = row.cells[1];
-                const expenseCell = row.cells[2];
+                const dateText = row.cells[0].textContent.trim();
+                const incomeCell = row.cells[1].textContent;
+                const expenseCell = row.cells[2].textContent;
+                const commentText = row.cells[3].textContent.trim();
 
-                // Парсим числа, если там текст - считаем как 0
-                const incomeVal = parseFloat(incomeCell.textContent) || 0;
-                const expenseVal = parseFloat(expenseCell.textContent) || 0;
+                const incomeVal = parseFloat(incomeCell) || 0;
+                const expenseVal = parseFloat(expenseCell) || 0;
 
+                if (dateText !== '' || incomeVal !== 0 || expenseVal !== 0 || commentText !== '') totalRecords++;
                 totalIncome += incomeVal;
                 totalExpense += expenseVal;
+                totalAllNumbers += (incomeVal + expenseVal);
             });
 
             const balance = totalIncome - totalExpense;
 
-            // Выводим на экран
             document.getElementById('total-income').textContent = totalIncome;
             document.getElementById('total-expense').textContent = totalExpense;
             document.getElementById('total-balance').textContent = balance;
+            document.getElementById('total-records').textContent = totalRecords;
+            document.getElementById('total-all-numbers').textContent = totalAllNumbers;
 
-            // Красим остаток в красный, если ушли в минус
             const balanceEl = document.getElementById('total-balance');
             if (balance < 0) {
-                balanceEl.classList.add('value-minus');
-                balanceEl.classList.remove('value-balance');
+                balanceEl.classList.add('value-minus'); balanceEl.classList.remove('value-balance');
             } else {
-                balanceEl.classList.add('value-balance');
-                balanceEl.classList.remove('value-minus');
+                balanceEl.classList.add('value-balance'); balanceEl.classList.remove('value-minus');
             }
-
-            // Сохраняем данные при каждом изменении
             saveData();
         }
 
-        // --- СОХРАНЕНИЕ ДАННЫХ В ПАМЯТЬ БРАУЗЕРА (LocalStorage) ---
+        // --- ЛОГИКА КАЛЬКУЛЯТОРА ПРОЦЕНТОВ (СЛОЖНЫЙ ПРОЦЕНТ) ---
+        function calculatePercent() {
+            const sumInput = document.getElementById('calc-sum').value;
+            const percentInput = document.getElementById('calc-percent').value;
+            
+            const sum = parseFloat(sumInput);
+            const percent = parseFloat(percentInput);
+
+            if (isNaN(sum) || isNaN(percent) || sum <= 0) {
+                alert("Пожалуйста, введи нормальные числа (больше нуля)!");
+                return;
+            }
+
+            // Формула сложного процента: Сумма * (1 + процент/100)^месяцы
+            const rate = 1 + (percent / 100);
+            
+            const res1m = sum * Math.pow(rate, 1);
+            const res3m = sum * Math.pow(rate, 3);
+            const res6m = sum * Math.pow(rate, 6);
+            const res1y = sum * Math.pow(rate, 12);
+
+            // Функция для красивого вывода (округляем до 2 знаков и добавляем пробелы)
+            const formatMoney = (num) => {
+                return num.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            };
+
+            document.getElementById('res-1m').textContent = formatMoney(res1m);
+            document.getElementById('res-3m').textContent = formatMoney(res3m);
+            document.getElementById('res-6m').textContent = formatMoney(res6m);
+            document.getElementById('res-1y').textContent = formatMoney(res1y);
+
+            // Показываем блок с результатами
+            document.getElementById('calc-results').style.display = 'block';
+        }
+
         function saveData() {
             const rows = tableBody.querySelectorAll('tr');
             const data = [];
-
             rows.forEach(row => {
                 data.push({
-                    date: row.cells[0].textContent,
-                    income: row.cells[1].textContent,
-                    expense: row.cells[2].textContent,
-                    comment: row.cells[3].textContent
+                    date: row.cells[0].textContent, income: row.cells[1].textContent,
+                    expense: row.cells[2].textContent, comment: row.cells[3].textContent
                 });
             });
-
             localStorage.setItem('papaBankData', JSON.stringify(data));
         }
 
-        // Загрузка данных при открытии сайта
         function loadData() {
             const savedData = localStorage.getItem('papaBankData');
-            
             if (savedData) {
                 const data = JSON.parse(savedData);
                 data.forEach(rowData => createRow(rowData));
             } else {
-                // Если данных нет, создаем 10 пустых строк для начала
-                for (let i = 0; i < 10; i++) {
-                    createRow();
-                }
+                for (let i = 0; i < 10; i++) createRow();
             }
-            calculateTotals(); // Считаем итоги после загрузки
+            calculateTotals(); 
         }
 
-        // Запускаем загрузку при старте
         loadData();
-
     </script>
 </body>
 </html>
