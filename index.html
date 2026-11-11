@@ -1,326 +1,3274 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Папа Банк - Умный учет</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-color: #eef2f5;
-            --primary: #4361ee;
-            --plus-color: #2ecc71;
-            --minus-color: #e74c3c;
-            --text-color: #2b2d42;
-            --gold: #f39c12;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Папа-банк PRO — семейный финансовый учёт: таблица с нарастающим итогом, счета, категории, аналитика, экспорт CSV. Данные хранятся локально в браузере.">
+<title>Папа-банк PRO — семейный финансовый учёт</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏦</text></svg>">
+<style>
+/* ==========================================================================
+   1. ПЕРЕМЕННЫЕ И ТЕМЫ
+   ========================================================================== */
+:root,
+:root[data-theme="dark"] {
+  --bg-main: #0b1020;
+  --bg-2: #111832;
+  --bg-3: #0b1020;
+  --glow-1: #2b1e6e;
+  --glow-2: #123160;
+  --text: #eef1ff;
+  --muted: #9aa3c7;
+  --muted-2: #6b74a0;
+  --card: rgba(255, 255, 255, 0.055);
+  --card-hover: rgba(255, 255, 255, 0.09);
+  --border: rgba(255, 255, 255, 0.1);
+  --border-strong: rgba(255, 255, 255, 0.18);
+  --accent: #7c6cff;
+  --accent-2: #5b8cff;
+  --accent-soft: rgba(124, 108, 255, 0.16);
+  --green: #2fd17c;
+  --green-bg: rgba(47, 209, 124, 0.13);
+  --red: #ff5d6c;
+  --red-bg: rgba(255, 93, 108, 0.13);
+  --yellow: #ffb454;
+  --yellow-bg: rgba(255, 180, 84, 0.13);
+  --input-bg: rgba(255, 255, 255, 0.06);
+  --input-focus: rgba(124, 108, 255, 0.28);
+  --hover-row: rgba(255, 255, 255, 0.05);
+  --chip-bg: rgba(255, 255, 255, 0.08);
+  --scrollbar: rgba(255, 255, 255, 0.15);
+  --shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+  --canvas-hole: #0b1020;
+  --canvas-grid: rgba(255, 255, 255, 0.08);
+  --modal-bg: #141a33;
+  --group-bg: rgba(124, 108, 255, 0.08);
+  --final-bg: rgba(124, 108, 255, 0.11);
+  --tooltip-bg: #1a2140;
+}
 
-        * { box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
+:root[data-theme="light"] {
+  --bg-main: #eef1fb;
+  --bg-2: #ffffff;
+  --bg-3: #e3e8f5;
+  --glow-1: #c9c2ff;
+  --glow-2: #bcd7ff;
+  --text: #1c2340;
+  --muted: #5c6488;
+  --muted-2: #8a92b5;
+  --card: rgba(255, 255, 255, 0.85);
+  --card-hover: #ffffff;
+  --border: rgba(28, 35, 64, 0.12);
+  --border-strong: rgba(28, 35, 64, 0.22);
+  --accent: #6a5cf5;
+  --accent-2: #3f7dff;
+  --accent-soft: rgba(106, 92, 245, 0.12);
+  --green: #12995c;
+  --green-bg: rgba(18, 153, 92, 0.12);
+  --red: #e0314d;
+  --red-bg: rgba(224, 49, 77, 0.1);
+  --yellow: #d98a00;
+  --yellow-bg: rgba(217, 138, 0, 0.12);
+  --input-bg: #ffffff;
+  --input-focus: rgba(106, 92, 245, 0.2);
+  --hover-row: rgba(28, 35, 64, 0.045);
+  --chip-bg: rgba(28, 35, 64, 0.07);
+  --scrollbar: rgba(28, 35, 64, 0.25);
+  --shadow: 0 14px 34px rgba(30, 40, 90, 0.14);
+  --canvas-hole: #ffffff;
+  --canvas-grid: rgba(28, 35, 64, 0.1);
+  --modal-bg: #ffffff;
+  --group-bg: rgba(106, 92, 245, 0.08);
+  --final-bg: rgba(106, 92, 245, 0.1);
+  --tooltip-bg: #ffffff;
+}
 
-        body {
-            background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
-            color: var(--text-color);
-            margin: 0; padding: 40px 20px;
-            display: flex; flex-direction: column; align-items: center;
-            min-height: 100vh;
-        }
+/* ==========================================================================
+   2. СБРОС И БАЗОВЫЕ СТИЛИ
+   ========================================================================== */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+html {
+  scroll-behavior: smooth;
+}
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: var(--text);
+  line-height: 1.5;
+  min-height: 100vh;
+  background:
+    radial-gradient(1100px 550px at 88% -8%, var(--glow-1) 0%, transparent 55%),
+    radial-gradient(900px 500px at -12% 32%, var(--glow-2) 0%, transparent 50%),
+    linear-gradient(160deg, var(--bg-main) 0%, var(--bg-2) 55%, var(--bg-3) 100%);
+  background-attachment: fixed;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+::selection {
+  background: var(--accent);
+  color: #fff;
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar);
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+a {
+  color: var(--accent);
+}
+button {
+  font-family: inherit;
+}
+input, select, textarea {
+  font-family: inherit;
+}
 
-        .container {
-            background: white; width: 100%; max-width: 850px;
-            border-radius: 20px; box-shadow: 0 15px 30px rgba(0,0,0,0.1);
-            padding: 30px; overflow: hidden;
-        }
+/* ==========================================================================
+   3. КАРКАС И ШАПКА
+   ========================================================================== */
+.container {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+header {
+  padding: 20px 0 4px;
+}
+.header-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+}
+.logo-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  font-size: 20px;
+  box-shadow: 0 6px 16px rgba(124, 108, 255, 0.35);
+}
+.logo span {
+  color: var(--accent);
+}
+.logo-badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #fff;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  padding: 3px 8px;
+  border-radius: 999px;
+  vertical-align: 2px;
+}
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.today-label {
+  color: var(--muted);
+  font-size: 13px;
+  text-transform: capitalize;
+}
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.15s ease;
+}
+.icon-btn:hover {
+  background: var(--card-hover);
+  border-color: var(--border-strong);
+  transform: translateY(-1px);
+}
 
-        h1 {
-            text-align: center; font-size: 36px; font-weight: 800;
-            color: var(--primary); margin-top: 0; margin-bottom: 25px;
-            text-transform: uppercase; letter-spacing: 2px;
-        }
+main {
+  padding: 22px 0 40px;
+}
+section {
+  margin-bottom: 20px;
+}
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  margin: 4px 0 14px;
+}
+.section-title::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
 
-        table {
-            width: 100%; border-collapse: collapse; margin-bottom: 20px;
-            border-radius: 10px; overflow: hidden;
-            box-shadow: 0 0 10px rgba(0,0,0,0.05);
-        }
+/* ==========================================================================
+   4. СВОДКА (КАРТОЧКИ)
+   ========================================================================== */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 20px;
+}
+@media (max-width: 900px) {
+  .summary-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 480px) {
+  .summary-grid { grid-template-columns: 1fr; }
+}
+.sum-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px 18px;
+  backdrop-filter: blur(8px);
+  box-shadow: var(--shadow);
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+.sum-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-strong);
+}
+.sum-card .sum-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.sum-card .sum-value {
+  display: block;
+  font-size: 24px;
+  font-weight: 800;
+  margin-top: 6px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+}
+.sum-card .sum-sub {
+  display: block;
+  font-size: 12px;
+  color: var(--muted-2);
+  margin-top: 4px;
+}
+.sum-card.total .sum-value { color: var(--accent); }
+.sum-card.plus .sum-value { color: var(--green); }
+.sum-card.minus .sum-value { color: var(--red); }
+.sum-card.count .sum-value { color: var(--yellow); }
+.sum-value.is-positive { color: var(--green) !important; }
+.sum-value.is-negative { color: var(--red) !important; }
+.sum-value.is-zero { color: var(--text) !important; }
 
-        th { background-color: var(--primary); color: white; font-weight: 600; padding: 15px; text-align: left; font-size: 16px; }
-        th:nth-child(1) { width: 20%; }
-        th:nth-child(2) { width: 15%; }
-        th:nth-child(3) { width: 15%; }
-        th:nth-child(4) { width: 50%; }
+/* ==========================================================================
+   5. КАРТОЧКИ (ОБЩЕЕ)
+   ========================================================================== */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 20px;
+  backdrop-filter: blur(8px);
+  box-shadow: var(--shadow);
+  min-width: 0;
+}
+.card-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.card-title h2 {
+  font-size: 16px;
+  font-weight: 700;
+}
+.card-title .hint {
+  font-size: 12px;
+  color: var(--muted-2);
+}
 
-        td {
-            padding: 12px 15px; border-bottom: 1px solid #e0e0e0;
-            font-weight: 600; background: white; transition: background 0.2s;
-        }
+/* ==========================================================================
+   6. ФОРМА ДОБАВЛЕНИЯ
+   ========================================================================== */
+.add-form {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.field label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+.field-date { width: 160px; }
+.field-amount { width: 150px; }
+.field-comment { flex: 1; min-width: 200px; }
+.field-category { width: 190px; }
+.field-account { width: 160px; }
 
-        td[contenteditable="true"]:focus {
-            outline: none; background-color: #f0f8ff;
-            box-shadow: inset 0 0 5px rgba(67, 97, 238, 0.3);
-        }
+input[type="text"],
+input[type="number"],
+input[type="date"],
+select {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--input-bg);
+  color: var(--text);
+  font-size: 14px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  width: 100%;
+}
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--input-focus);
+}
+input::placeholder {
+  color: var(--muted-2);
+}
+select {
+  cursor: pointer;
+}
+select option {
+  background: var(--modal-bg);
+  color: var(--text);
+}
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.7);
+  cursor: pointer;
+}
+:root[data-theme="light"] input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: none;
+}
+.amount-wrap {
+  position: relative;
+}
+.amount-wrap .currency-sign {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted-2);
+  font-size: 13px;
+  pointer-events: none;
+}
+.amount-wrap input {
+  padding-right: 36px;
+}
 
-        td.income-text { color: var(--plus-color); }
-        td.expense-text { color: var(--minus-color); }
-        tr:hover td { background-color: #f9f9f9; }
+/* Переключатель типа + / − */
+.type-toggle {
+  display: flex;
+  gap: 6px;
+}
+.type-btn {
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 800;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--muted);
+  transition: all 0.15s ease;
+}
+.type-btn:hover {
+  background: var(--card-hover);
+}
+.type-btn[data-type="plus"].active {
+  background: var(--green-bg);
+  border-color: var(--green);
+  color: var(--green);
+}
+.type-btn[data-type="minus"].active {
+  background: var(--red-bg);
+  border-color: var(--red);
+  color: var(--red);
+}
 
-        .controls { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; flex-wrap: wrap; gap: 15px; }
+/* ==========================================================================
+   7. КНОПКИ
+   ========================================================================== */
+.btn {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+  transition: transform 0.12s ease, filter 0.15s ease, background 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+}
+.btn:active {
+  transform: scale(0.97);
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(124, 108, 255, 0.3);
+}
+.btn-primary:hover {
+  filter: brightness(1.12);
+}
+.btn-ghost {
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+.btn-ghost:hover {
+  background: var(--card-hover);
+  border-color: var(--border-strong);
+}
+.btn-danger {
+  background: var(--red-bg);
+  border: 1px solid var(--red);
+  color: var(--red);
+}
+.btn-danger:hover {
+  background: var(--red);
+  color: #fff;
+}
+.btn-success {
+  background: var(--green-bg);
+  border: 1px solid var(--green);
+  color: var(--green);
+}
+.btn-success:hover {
+  background: var(--green);
+  color: #fff;
+}
+.btn-sm {
+  padding: 7px 12px;
+  font-size: 13px;
+  border-radius: 9px;
+}
 
-        .btn {
-            background: var(--primary); color: white; border: none; padding: 12px 25px;
-            border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer;
-            box-shadow: 0 4px 6px rgba(67, 97, 238, 0.3); transition: all 0.2s;
-        }
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(67, 97, 238, 0.4); }
-        .btn:active { transform: translateY(0); }
-        .btn.danger { background: #ff4757; box-shadow: 0 4px 6px rgba(255, 71, 87, 0.3); }
-        .btn.danger:hover { box-shadow: 0 6px 12px rgba(255, 71, 87, 0.4); }
+.toolbar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.toolbar .divider {
+  width: 1px;
+  height: 24px;
+  background: var(--border);
+  margin: 0 4px;
+}
 
-        .totals {
-            display: flex; justify-content: space-around; background: #f8f9fa;
-            padding: 20px; border-radius: 15px; margin-top: 20px;
-            border: 2px dashed #dcdcdc; flex-wrap: wrap; gap: 10px;
-        }
-        .total-item { text-align: center; min-width: 100px; }
-        .total-label { font-size: 14px; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
-        .total-value { font-size: 28px; font-weight: 800; }
-        .value-plus { color: var(--plus-color); }
-        .value-minus { color: var(--minus-color); }
-        .value-balance { color: var(--primary); }
+/* ==========================================================================
+   8. ГРАФИКИ
+   ========================================================================== */
+.chart-columns {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  align-items: start;
+}
+@media (max-width: 1000px) {
+  .chart-columns { grid-template-columns: 1fr; }
+}
+.chart-box {
+  min-height: 220px;
+  position: relative;
+}
+.chart-box canvas {
+  width: 100%;
+  height: 220px;
+  display: block;
+}
+.chart-empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted-2);
+  font-size: 13px;
+  text-align: center;
+  line-height: 1.6;
+  pointer-events: none;
+}
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  margin-top: 12px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  display: inline-block;
+  flex-shrink: 0;
+}
 
-        .extra-stats {
-            display: flex; justify-content: space-between; background: #e6e9f0;
-            padding: 15px 20px; border-radius: 10px; margin-top: 15px;
-            font-size: 16px; font-weight: 600; color: #555;
-        }
-        .stat-item span { font-weight: 800; color: var(--primary); font-size: 18px;}
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+@media (max-width: 860px) {
+  .stats-grid { grid-template-columns: 1fr; }
+}
+.stat-chips {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+@media (max-width: 560px) {
+  .stat-chips { grid-template-columns: 1fr; }
+}
+.stat-chip {
+  background: var(--chip-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 9px 12px;
+}
+.stat-chip .stat-chip-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  color: var(--muted);
+}
+.stat-chip .stat-chip-value {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  margin-top: 2px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.top-cats {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.top-cat {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+}
+.top-cat .top-cat-name {
+  width: 120px;
+  flex-shrink: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--muted);
+}
+.top-cat .top-cat-bar {
+  flex: 1;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--chip-bg);
+  overflow: hidden;
+}
+.top-cat .top-cat-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+.top-cat .top-cat-value {
+  width: 96px;
+  text-align: right;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
 
-        /* --- БЛОК КАЛЬКУЛЯТОРА ПРОЦЕНТОВ --- */
-        .calc-box {
-            background: #fff9e6; border: 3px solid var(--gold);
-            border-radius: 15px; padding: 20px; margin-top: 30px;
-        }
-        .calc-box h3 { margin-top: 0; color: #d35400; text-align: center; font-size: 22px;}
-        .calc-inputs { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-bottom: 15px;}
-        .calc-inputs input {
-            padding: 12px; border-radius: 10px; border: 2px solid #ccc;
-            font-size: 18px; font-weight: 600; width: 200px; outline: none;
-        }
-        .calc-inputs input:focus { border-color: var(--gold); }
-        .calc-btn {
-            background: var(--gold); color: white; border: none; padding: 12px 30px;
-            border-radius: 10px; font-size: 18px; font-weight: 800; cursor: pointer;
-            box-shadow: 0 4px 0 #b8730d; transition: 0.1s; display: block; margin: 0 auto;
-        }
-        .calc-btn:active { transform: translateY(4px); box-shadow: none; }
-        
-        .calc-results {
-            display: none; margin-top: 20px; background: white; padding: 15px;
-            border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            text-align: center; font-size: 18px; line-height: 1.6;
-        }
-        .calc-results span { font-weight: 800; color: var(--plus-color); }
+/* ==========================================================================
+   9. ТАБЛИЦА
+   ========================================================================== */
+.table-filters {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 14px;
+}
+.search-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 200px;
+  max-width: 320px;
+}
+.search-wrap::before {
+  content: "🔍";
+  position: absolute;
+  left: 11px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 13px;
+  opacity: 0.6;
+}
+.search-wrap input {
+  padding-left: 34px;
+}
+.pill-group {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.pill {
+  padding: 8px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--muted);
+  transition: all 0.15s ease;
+}
+.pill:hover {
+  background: var(--card-hover);
+}
+.pill.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.pill.active[data-filter="plus"] {
+  background: var(--green-bg);
+  border-color: var(--green);
+  color: var(--green);
+}
+.pill.active[data-filter="minus"] {
+  background: var(--red-bg);
+  border-color: var(--red);
+  color: var(--red);
+}
+.filter-select {
+  width: auto;
+  min-width: 140px;
+}
 
-        @media (max-width: 600px) {
-            .totals, .extra-stats { flex-direction: column; text-align: center; gap: 15px; }
-            .calc-inputs input { width: 100%; }
-        }
-    </style>
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 920px;
+}
+thead th {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.9px;
+  color: var(--muted);
+  text-align: left;
+  padding: 11px 12px;
+  border-bottom: 1px solid var(--border);
+  background: var(--chip-bg);
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+th.num, td.num {
+  text-align: right;
+}
+td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+  vertical-align: middle;
+  font-variant-numeric: tabular-nums;
+}
+tbody tr {
+  transition: background 0.12s ease;
+  animation: fadeIn 0.2s ease;
+}
+tbody tr:hover {
+  background: var(--hover-row);
+}
+td.date-cell {
+  color: var(--muted);
+  white-space: nowrap;
+}
+td.amount-plus {
+  color: var(--green);
+  font-weight: 700;
+}
+td.amount-minus {
+  color: var(--red);
+  font-weight: 700;
+}
+td.total-cell {
+  font-weight: 800;
+}
+td.total-cell.high {
+  color: var(--green);
+}
+td.total-cell.low {
+  color: var(--red);
+}
+td.comment-cell {
+  max-width: 240px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.chip {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--chip-bg);
+  color: var(--muted);
+  white-space: nowrap;
+}
+.chip-cat {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.chip-account {
+  background: var(--yellow-bg);
+  color: var(--yellow);
+}
+.row-actions {
+  display: flex;
+  gap: 4px;
+  justify-content: flex-end;
+}
+.row-btn {
+  border: none;
+  background: transparent;
+  color: var(--muted-2);
+  cursor: pointer;
+  font-size: 13px;
+  border-radius: 8px;
+  width: 28px;
+  height: 28px;
+  transition: all 0.15s ease;
+}
+.row-btn:hover {
+  background: var(--card-hover);
+  color: var(--text);
+}
+.row-btn.delete:hover {
+  background: var(--red);
+  color: #fff;
+}
+.row-btn.edit:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* Группировка по месяцам */
+tr.group-row td {
+  background: var(--group-bg);
+  border-top: 2px solid var(--border);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  padding: 8px 12px;
+}
+tr.group-row td .group-name {
+  color: var(--text);
+  margin-right: 10px;
+}
+tr.group-row td .group-stats {
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0;
+  display: inline-flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.group-plus { color: var(--green); }
+.group-minus { color: var(--red); }
+.group-net {
+  color: var(--text);
+  font-weight: 800;
+}
+
+/* Итоговая строка */
+tr.final-row td {
+  border-top: 2px solid var(--border-strong);
+  border-bottom: none;
+  font-weight: 800;
+  background: var(--final-bg);
+  font-size: 14px;
+}
+tr.final-row td.label-cell {
+  color: var(--muted);
+  font-weight: 700;
+}
+.empty-state {
+  text-align: center;
+  color: var(--muted);
+  padding: 34px 10px;
+  font-size: 14px;
+}
+.empty-state .empty-icon {
+  display: block;
+  font-size: 38px;
+  margin-bottom: 8px;
+}
+.empty-state .empty-action {
+  display: inline-block;
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--accent);
+  cursor: pointer;
+  text-decoration: underline;
+}
+.table-footer-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+  font-size: 12px;
+  color: var(--muted-2);
+}
+
+/* ==========================================================================
+   10. МОДАЛЬНЫЕ ОКНА
+   ========================================================================== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 8, 20, 0.65);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+.modal-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.modal {
+  width: 100%;
+  max-width: 470px;
+  background: var(--modal-bg);
+  border: 1px solid var(--border-strong);
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: var(--shadow);
+  transform: translateY(10px) scale(0.98);
+  transition: transform 0.2s ease;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+.modal-overlay.open .modal {
+  transform: none;
+}
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+.modal-header h3 {
+  font-size: 17px;
+  font-weight: 700;
+}
+.modal-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  border: none;
+  background: var(--chip-bg);
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 15px;
+  transition: all 0.15s ease;
+}
+.modal-close:hover {
+  background: var(--red);
+  color: #fff;
+}
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.modal-form .btn {
+  margin-top: 6px;
+  justify-content: center;
+}
+.modal-note {
+  font-size: 12px;
+  color: var(--muted-2);
+  margin-top: 10px;
+}
+.settings-section {
+  margin-bottom: 18px;
+}
+.settings-section h4 {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+.accounts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.accounts-list .account-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--card);
+}
+.accounts-list .account-row .account-name {
+  font-size: 14px;
+  font-weight: 600;
+}
+.accounts-list .account-row .account-balance {
+  font-size: 12px;
+  color: var(--muted);
+}
+.add-account-row {
+  display: flex;
+  gap: 8px;
+}
+.add-account-row input {
+  flex: 1;
+}
+.theme-row {
+  display: flex;
+  gap: 8px;
+}
+.theme-option {
+  flex: 1;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.theme-option.active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+/* ==========================================================================
+   11. УВЕДОМЛЕНИЯ (TOAST)
+   ========================================================================== */
+.toast-container {
+  position: fixed;
+  bottom: 22px;
+  right: 22px;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 320px;
+}
+.toast {
+  background: var(--tooltip-bg);
+  border: 1px solid var(--border-strong);
+  color: var(--text);
+  border-radius: 12px;
+  padding: 11px 16px;
+  font-size: 13px;
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: toastIn 0.25s ease;
+}
+.toast.out {
+  animation: toastOut 0.25s ease forwards;
+}
+.toast.success { border-left: 3px solid var(--green); }
+.toast.error { border-left: 3px solid var(--red); }
+.toast.info { border-left: 3px solid var(--accent); }
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes toastOut {
+  from { opacity: 1; transform: none; }
+  to { opacity: 0; transform: translateY(12px); }
+}
+
+/* ==========================================================================
+   12. ПОДВАЛ
+   ========================================================================== */
+footer {
+  padding: 8px 0 30px;
+  text-align: center;
+  color: var(--muted-2);
+  font-size: 12px;
+}
+footer .kbd {
+  display: inline-block;
+  padding: 1px 6px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: var(--card);
+  font-size: 11px;
+  font-weight: 600;
+  margin: 0 2px;
+}
+
+/* ==========================================================================
+   13. ПРОЧЕЕ И АНИМАЦИИ
+   ========================================================================== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: none; }
+}
+.hidden {
+  display: none !important;
+}
+.text-muted { color: var(--muted); }
+.text-green { color: var(--green); }
+.text-red { color: var(--red); }
+.mt-14 { margin-top: 14px; }
+
+details.help {
+  font-size: 13px;
+  color: var(--muted);
+}
+details.help summary {
+  cursor: pointer;
+  color: var(--accent);
+  font-weight: 600;
+  padding: 6px 0;
+}
+details.help ul {
+  margin: 8px 0 4px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+details.help code {
+  background: var(--chip-bg);
+  padding: 1px 5px;
+  border-radius: 5px;
+  font-size: 12px;
+}
+
+/* ==========================================================================
+   14. АДАПТИВНОСТЬ
+   ========================================================================== */
+@media (max-width: 640px) {
+  .add-form { flex-direction: column; align-items: stretch; }
+  .field-date, .field-amount, .field-category, .field-account {
+    width: 100%;
+    min-width: 0;
+  }
+  .field-comment { min-width: 0; }
+  .toolbar .divider { display: none; }
+  .toolbar .btn { flex: 1; justify-content: center; }
+  .today-label { display: none; }
+}
+
+/* ==========================================================================
+   15. ПЕЧАТЬ
+   ========================================================================== */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+  .container {
+    max-width: 100%;
+    padding: 0;
+  }
+  .card {
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+  .table-wrap {
+    border: 1px solid #999;
+  }
+  thead th {
+    background: #eee !important;
+    color: #000 !important;
+  }
+  td {
+    color: #000 !important;
+  }
+  td.amount-plus, .group-plus { color: #0a7a3d !important; }
+  td.amount-minus, .group-minus { color: #c00 !important; }
+  tr.group-row td, tr.final-row td {
+    background: #eee !important;
+  }
+  section { margin-bottom: 8px; }
+}
+</style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>Папа Банк</h1>
+<!-- ================================================================
+     ШАПКА
+================================================================ -->
+<header class="no-print">
+  <div class="container header-inner">
+    <div class="logo">
+      <span class="logo-icon">🏦</span>
+      <span><span>Папа-</span>банк</span>
+      <span class="logo-badge">PRO</span>
+    </div>
+    <div class="header-right">
+      <span class="today-label" id="todayLabel"></span>
+      <button type="button" class="icon-btn" id="themeToggle" title="Сменить тему (T)">🌙</button>
+      <button type="button" class="icon-btn" id="settingsBtn" title="Настройки">⚙️</button>
+    </div>
+  </div>
+</header>
 
-        <table id="bankTable">
-            <thead>
-                <tr>
-                    <th>Дата</th>
-                    <th>+</th>
-                    <th>-</th>
-                    <th>Комментарий</th>
-                </tr>
-            </thead>
-            <tbody id="table-body"></tbody>
+<main class="container">
+
+  <!-- ============================================================
+       СВОДКА
+  ============================================================ -->
+  <section class="no-print">
+    <div class="summary-grid">
+      <div class="sum-card total">
+        <span class="sum-label">💰 Итоговая сумма</span>
+        <span class="sum-value is-zero" id="sumTotal">0 ₽</span>
+        <span class="sum-sub" id="sumTotalSub">всего по всем счетам</span>
+      </div>
+      <div class="sum-card plus">
+        <span class="sum-label">📈 Всего плюсов</span>
+        <span class="sum-value" id="sumPlus">0 ₽</span>
+        <span class="sum-sub" id="sumPlusCount">операций: 0</span>
+      </div>
+      <div class="sum-card minus">
+        <span class="sum-label">📉 Всего минусов</span>
+        <span class="sum-value" id="sumMinus">0 ₽</span>
+        <span class="sum-sub" id="sumMinusCount">операций: 0</span>
+      </div>
+      <div class="sum-card count">
+        <span class="sum-label">🧾 Всего операций</span>
+        <span class="sum-value" id="sumCount">0</span>
+        <span class="sum-sub" id="sumCountSub">средний чек: —</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       ФОРМА ДОБАВЛЕНИЯ
+  ============================================================ -->
+  <section class="no-print">
+    <div class="card">
+      <div class="card-title">
+        <h2>➕ Новая операция</h2>
+        <span class="hint">Enter — добавить быстрее</span>
+      </div>
+      <form class="add-form" id="addForm" autocomplete="off">
+        <div class="field">
+          <label>Тип</label>
+          <div class="type-toggle">
+            <button type="button" class="type-btn active" data-type="plus" title="Доход — деньги пришли">+</button>
+            <button type="button" class="type-btn" data-type="minus" title="Расход — деньги ушли">−</button>
+          </div>
+        </div>
+        <div class="field field-date">
+          <label for="fDate">Дата</label>
+          <input type="date" id="fDate" required>
+        </div>
+        <div class="field field-amount">
+          <label for="fAmount">Сумма</label>
+          <div class="amount-wrap">
+            <input type="number" id="fAmount" min="0.01" step="0.01" placeholder="0.00" required>
+            <span class="currency-sign" id="currencySign">₽</span>
+          </div>
+        </div>
+        <div class="field field-category">
+          <label for="fCategory">Категория</label>
+          <select id="fCategory"></select>
+        </div>
+        <div class="field field-account">
+          <label for="fAccount">Счёт</label>
+          <select id="fAccount"></select>
+        </div>
+        <div class="field field-comment">
+          <label for="fComment">Комментарий</label>
+          <input type="text" id="fComment" maxlength="120" placeholder="на что или откуда деньги">
+        </div>
+        <button type="submit" class="btn btn-primary">Добавить</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       ИНСТРУМЕНТЫ
+  ============================================================ -->
+  <section class="no-print">
+    <div class="toolbar">
+      <button type="button" class="btn btn-ghost btn-sm" id="undoBtn" title="Отменить последнее действие (Ctrl+Z)">↶ Отменить</button>
+      <div class="divider"></div>
+      <button type="button" class="btn btn-ghost btn-sm" id="exportCsvBtn" title="Скачать таблицу в формате CSV">⬇ Экспорт CSV</button>
+      <button type="button" class="btn btn-ghost btn-sm" id="importCsvBtn" title="Загрузить операции из CSV-файла">⬆ Импорт CSV</button>
+      <input type="file" id="csvFileInput" accept=".csv,text/csv" class="hidden">
+      <div class="divider"></div>
+      <button type="button" class="btn btn-ghost btn-sm" id="backupBtn" title="Скачать резервную копию всех данных">💾 Бэкап</button>
+      <button type="button" class="btn btn-ghost btn-sm" id="restoreBtn" title="Восстановить данные из бэкапа">📂 Восстановить</button>
+      <input type="file" id="restoreFileInput" accept=".json,application/json" class="hidden">
+      <div class="divider"></div>
+      <button type="button" class="btn btn-success btn-sm" id="demoBtn" title="Заполнить таблицу примером для знакомства">✨ Демо-данные</button>
+      <button type="button" class="btn btn-ghost btn-sm" id="printBtn" title="Подготовить таблицу к печати">🖨 Печать</button>
+      <div class="divider"></div>
+      <button type="button" class="btn btn-danger btn-sm" id="clearBtn" title="Удалить ВСЕ операции">🗑 Очистить всё</button>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       АНАЛИТИКА
+  ============================================================ -->
+  <section class="no-print">
+    <div class="section-title">📊 Аналитика</div>
+    <div class="chart-columns">
+      <div class="card">
+        <div class="card-title">
+          <h2>Расходы по категориям</h2>
+          <span class="hint">доля в расходах</span>
+        </div>
+        <div class="chart-box">
+          <canvas id="donutCanvas"></canvas>
+          <div class="chart-empty hidden" id="donutEmpty">Недостаточно данных<br>добавьте операции</div>
+        </div>
+        <div class="legend" id="donutLegend"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <h2>Доходы и расходы</h2>
+          <span class="hint">последние 6 месяцев</span>
+        </div>
+        <div class="chart-box">
+          <canvas id="barCanvas"></canvas>
+          <div class="chart-empty hidden" id="barEmpty">Недостаточно данных<br>добавьте операции</div>
+        </div>
+        <div class="legend">
+          <span class="legend-item"><span class="legend-dot" style="background:var(--green)"></span>Доходы</span>
+          <span class="legend-item"><span class="legend-dot" style="background:var(--red)"></span>Расходы</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <h2>Накопленный баланс</h2>
+          <span class="hint">по дням</span>
+        </div>
+        <div class="chart-box">
+          <canvas id="lineCanvas"></canvas>
+          <div class="chart-empty hidden" id="lineEmpty">Нужно минимум<br>2 дня с записями</div>
+        </div>
+        <div class="legend">
+          <span class="legend-item"><span class="legend-dot" style="background:var(--accent)"></span>Сальдо</span>
+          <span class="legend-item"><span class="legend-dot" style="background:var(--muted-2)"></span>Ноль</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       ПОКАЗАТЕЛИ
+  ============================================================ -->
+  <section class="no-print">
+    <div class="section-title">🏆 Показатели</div>
+    <div class="stats-grid">
+      <div class="card">
+        <div class="card-title">
+          <h2>Сводка по периоду</h2>
+          <span class="hint" id="statsPeriodHint">—</span>
+        </div>
+        <div class="stat-chips" id="statChips"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">
+          <h2>Топ категорий расходов</h2>
+          <span class="hint">5 лидеров</span>
+        </div>
+        <div class="top-cats" id="topCats"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       ТАБЛИЦА
+  ============================================================ -->
+  <section>
+    <div class="card">
+      <div class="card-title">
+        <h2>📋 Таблица операций</h2>
+        <span class="hint">двойной клик по строке — редактировать</span>
+      </div>
+
+      <div class="table-filters no-print">
+        <div class="search-wrap">
+          <input type="text" id="searchInput" placeholder="Поиск по комментарию, категории, счёту…">
+        </div>
+        <div class="pill-group" id="typePills">
+          <button type="button" class="pill active" data-filter="all">Все</button>
+          <button type="button" class="pill" data-filter="plus">+ Доходы</button>
+          <button type="button" class="pill" data-filter="minus">− Расходы</button>
+        </div>
+        <select class="filter-select" id="periodFilter" title="Период">
+          <option value="all">Весь период</option>
+          <option value="month">Текущий месяц</option>
+          <option value="prev3">Последние 3 месяца</option>
+          <option value="year">Текущий год</option>
+          <option value="last365">Последние 365 дней</option>
+        </select>
+        <select class="filter-select" id="categoryFilter" title="Фильтр по категории">
+          <option value="all">Все категории</option>
+        </select>
+        <select class="filter-select" id="accountFilter" title="Фильтр по счёту">
+          <option value="all">Все счета</option>
+        </select>
+        <select class="filter-select" id="sortSelect" title="Сортировка">
+          <option value="date-asc">Дата ↑ (журнал)</option>
+          <option value="date-desc">Дата ↓</option>
+          <option value="amount-desc">Сумма ↓</option>
+          <option value="amount-asc">Сумма ↑</option>
+          <option value="comment-asc">Комментарий А–Я</option>
+        </select>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Дата</th>
+              <th class="num">+</th>
+              <th class="num">−</th>
+              <th>Категория</th>
+              <th>Комментарий</th>
+              <th>Счёт</th>
+              <th class="num">Итог</th>
+              <th class="num">Действия</th>
+            </tr>
+          </thead>
+          <tbody id="rowsBody"></tbody>
         </table>
-
-        <div class="controls">
-            <button class="btn" onclick="addRow()">➕ Добавить строку</button>
-            <button class="btn danger" onclick="clearTable()">🗑️ Очистить всё</button>
+        <div class="empty-state hidden" id="emptyState">
+          <span class="empty-icon">🗂️</span>
+          Таблица пуста — добавьте первую запись выше
+          <br>
+          <span class="empty-action" id="emptyDemoBtn">или покажите пример с демо-данными</span>
         </div>
+      </div>
 
-        <div class="totals">
-            <div class="total-item">
-                <div class="total-label">Доходы (+)</div>
-                <div class="total-value value-plus" id="total-income">0</div>
-            </div>
-            <div class="total-item">
-                <div class="total-label">Расходы (-)</div>
-                <div class="total-value value-minus" id="total-expense">0</div>
-            </div>
-            <div class="total-item">
-                <div class="total-label">Остаток</div>
-                <div class="total-value value-balance" id="total-balance">0</div>
-            </div>
+      <div class="table-footer-info">
+        <span id="rowsInfo">0 записей</span>
+        <span>📐 Итог каждой строки — накопленная сумма с начала таблицы</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       СПРАВКА
+  ============================================================ -->
+  <section class="no-print">
+    <details class="help">
+      <summary>Как пользоваться «Папа-банк PRO»?</summary>
+      <ul>
+        <li><code>+</code> / <code>−</code> — выберите тип операции, заполните сумму и нажмите «Добавить». Можно писать сумму прямо в поле и жать Enter.</li>
+        <li>Колонка <b>Итог</b> — скользящий баланс: каждая строка прибавляет/вычитает свою сумму к предыдущей.</li>
+        <li>Таблица группируется по месяцам: в заголовке группы сразу видны плюсы, минусы и итог месяца.</li>
+        <li><b>Двойной клик</b> по строке — редактирование записи, кнопки ✏️ и 🗑 — в колонке действий.</li>
+        <li><b>Экспорт CSV</b> — файл для Excel (с русскими буквами). <b>Импорт CSV</b> — загрузка обратно, дубли отсекаются.</li>
+        <li><b>Бэкап / Восстановить</b> — полная копия данных в JSON-файле.</li>
+        <li>Горячие клавиши: <code>N</code> — сумма, <code>/</code> — поиск, <code>Ctrl+Z</code> — отмена, <code>T</code> — тема, <code>Esc</code> — закрыть окно.</li>
+        <li>Все данные хранятся только в вашем браузере. Кнопка «Очистить всё» удаляет записи (но их можно вернуть через «Отменить»).</li>
+      </ul>
+    </details>
+  </section>
+
+</main>
+
+<!-- ================================================================
+     ПОДВАЛ
+================================================================ -->
+<footer class="no-print">
+  <div class="container">
+    🏦 Папа-банк PRO · данные живут только в вашем браузере ·
+    <span class="kbd">N</span> сумма ·
+    <span class="kbd">/</span> поиск ·
+    <span class="kbd">Ctrl+Z</span> отмена ·
+    <span class="kbd">T</span> тема
+    · <span id="footerCount"></span>
+  </div>
+</footer>
+
+<!-- ================================================================
+     МОДАЛЬНОЕ ОКНО: РЕДАКТИРОВАНИЕ
+================================================================ -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>✏️ Редактировать запись</h3>
+      <button type="button" class="modal-close" data-close="editModal">✕</button>
+    </div>
+    <form class="modal-form" id="editForm" autocomplete="off">
+      <div class="field">
+        <label>Тип</label>
+        <div class="type-toggle">
+          <button type="button" class="type-btn" data-type="plus">+</button>
+          <button type="button" class="type-btn" data-type="minus">−</button>
         </div>
-
-        <div class="extra-stats">
-            <div class="stat-item">📝 Всего записей: <span id="total-records">0</span></div>
-            <div class="stat-item">🧮 Сумма всех чисел: <span id="total-all-numbers">0</span></div>
+      </div>
+      <div class="field">
+        <label for="eDate">Дата</label>
+        <input type="date" id="eDate" required>
+      </div>
+      <div class="field">
+        <label for="eAmount">Сумма</label>
+        <div class="amount-wrap">
+          <input type="number" id="eAmount" min="0.01" step="0.01" required>
+          <span class="currency-sign" id="eCurrencySign">₽</span>
         </div>
+      </div>
+      <div class="field">
+        <label for="eCategory">Категория</label>
+        <select id="eCategory"></select>
+      </div>
+      <div class="field">
+        <label for="eAccount">Счёт</label>
+        <select id="eAccount"></select>
+      </div>
+      <div class="field">
+        <label for="eComment">Комментарий</label>
+        <input type="text" id="eComment" maxlength="120">
+      </div>
+      <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+      <button type="button" class="btn btn-ghost" data-close="editModal">Отмена</button>
+    </form>
+  </div>
+</div>
 
-        <!-- НОВЫЙ БЛОК: УМНЫЙ КАЛЬКУЛЯТОР -->
-        <div class="calc-box">
-            <h3>📈 Калькулятор «Копилка под %»</h3>
-            <p style="text-align: center; margin-top: 0; font-size: 14px; color: #666;">Узнай, сколько накопится, если вкладывать под процент.</p>
-            
-            <div class="calc-inputs">
-                <input type="number" id="calc-sum" placeholder="Сумма (например, 10000)" min="0">
-                <input type="number" id="calc-percent" placeholder="% в месяц (например, 10)" min="0">
-            </div>
-            <button class="calc-btn" onclick="calculatePercent()">Посчитать!</button>
-
-            <!-- Сюда выведутся результаты -->
-            <div class="calc-results" id="calc-results">
-                Через 1 месяц: <span id="res-1m">0</span> ₽<br>
-                Через 3 месяца: <span id="res-3m">0</span> ₽<br>
-                Через 6 месяцев: <span id="res-6m">0</span> ₽<br>
-                Через 1 год: <span id="res-1y">0</span> ₽
-            </div>
-        </div>
+<!-- ================================================================
+     МОДАЛЬНОЕ ОКНО: НАСТРОЙКИ
+================================================================ -->
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>⚙️ Настройки</h3>
+      <button type="button" class="modal-close" data-close="settingsModal">✕</button>
     </div>
 
-    <script>
-        const tableBody = document.getElementById('table-body');
+    <div class="settings-section">
+      <h4>Валюта</h4>
+      <select id="currencySelect"></select>
+      <p class="modal-note">Символ валюты используется во всех суммах, экспорте и графиках.</p>
+    </div>
 
-        function createRow(data = { date: '', income: '', expense: '', comment: '' }) {
-            const tr = document.createElement('tr');
-            
-            const tdDate = document.createElement('td');
-            tdDate.contentEditable = "true"; tdDate.textContent = data.date;
-            
-            const tdIncome = document.createElement('td');
-            tdIncome.contentEditable = "true"; tdIncome.textContent = data.income; tdIncome.classList.add('income-text');
-            
-            const tdExpense = document.createElement('td');
-            tdExpense.contentEditable = "true"; tdExpense.textContent = data.expense; tdExpense.classList.add('expense-text');
-            
-            const tdComment = document.createElement('td');
-            tdComment.contentEditable = "true"; tdComment.textContent = data.comment;
+    <div class="settings-section">
+      <h4>Тема оформления</h4>
+      <div class="theme-row">
+        <button type="button" class="theme-option" data-theme-value="dark">🌙 Тёмная</button>
+        <button type="button" class="theme-option" data-theme-value="light">☀️ Светлая</button>
+      </div>
+    </div>
 
-            tr.appendChild(tdDate); tr.appendChild(tdIncome); tr.appendChild(tdExpense); tr.appendChild(tdComment);
+    <div class="settings-section">
+      <h4>Счета</h4>
+      <div class="accounts-list" id="accountsList"></div>
+      <div class="add-account-row">
+        <input type="text" id="newAccountInput" maxlength="24" placeholder="Название нового счёта">
+        <button type="button" class="btn btn-primary btn-sm" id="addAccountBtn">Добавить</button>
+      </div>
+      <p class="modal-note">Удаление счёта переносит его операции на первый оставшийся счёт.</p>
+    </div>
 
-            tdIncome.addEventListener('input', calculateTotals);
-            tdExpense.addEventListener('input', calculateTotals);
-            tdDate.addEventListener('input', calculateTotals);
-            tdComment.addEventListener('input', calculateTotals);
+    <div class="settings-section">
+      <h4>Данные</h4>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button type="button" class="btn btn-ghost btn-sm" id="settingsBackupBtn">💾 Скачать бэкап</button>
+        <button type="button" class="btn btn-ghost btn-sm" id="settingsRestoreBtn">📂 Восстановить</button>
+        <button type="button" class="btn btn-danger btn-sm" id="settingsClearBtn">🗑 Очистить всё</button>
+      </div>
+      <p class="modal-note">Данные не покидают ваш браузер и не отправляются ни на какой сервер.</p>
+    </div>
+  </div>
+</div>
 
-            tableBody.appendChild(tr);
+<!-- ================================================================
+     УВЕДОМЛЕНИЯ
+================================================================ -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+/* ==========================================================================
+   ПАПА-БАНК PRO — логика приложения
+   ========================================================================== */
+(function () {
+  'use strict';
+
+  /* ------------------------------------------------------------------
+     1. КОНСТАНТЫ
+     ------------------------------------------------------------------ */
+  const STORAGE_KEY = 'papa-bank-pro:v3';
+  const UNDO_LIMIT = 80;
+
+  const DEFAULT_ACCOUNTS = ['Наличные', 'Карта', 'Копилка'];
+
+  const EXPENSE_CATEGORIES = [
+    'Продукты', 'Кафе и рестораны', 'Транспорт', 'ЖКХ и связь',
+    'Развлечения', 'Здоровье', 'Одежда', 'Дом и ремонт',
+    'Образование', 'Подарки', 'Дети', 'Прочее'
+  ];
+
+  const INCOME_CATEGORIES = [
+    'Зарплата', 'Подработка', 'Подарок', 'Кэшбэк',
+    'Аренда', 'Инвестиции', 'Прочее'
+  ];
+
+  const ALL_CATEGORIES = Array.from(new Set(EXPENSE_CATEGORIES.concat(INCOME_CATEGORIES)));
+
+  const CURRENCIES = [
+    { code: 'RUB', symbol: '₽', label: 'Российский рубль (₽)' },
+    { code: 'USD', symbol: '$', label: 'Доллар США ($)' },
+    { code: 'EUR', symbol: '€', label: 'Евро (€)' },
+    { code: 'KZT', symbol: '₸', label: 'Тенге (₸)' },
+    { code: 'UAH', symbol: '₴', label: 'Гривна (₴)' }
+  ];
+
+  const CHART_COLORS = [
+    '#7c6cff', '#2fd17c', '#ff5d6c', '#ffb454',
+    '#4db6ff', '#e879f9', '#34d3b8', '#f87171',
+    '#a3e635', '#fbbf24', '#60a5fa', '#f472b6'
+  ];
+
+  const MONTHS_SHORT = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'];
+
+  /* ------------------------------------------------------------------
+     2. СОСТОЯНИЕ
+     ------------------------------------------------------------------ */
+  function defaultSettings() {
+    return {
+      theme: 'dark',
+      currency: 'RUB',
+      accounts: DEFAULT_ACCOUNTS.slice()
+    };
+  }
+
+  const state = {
+    rows: [],
+    settings: defaultSettings(),
+    filters: {
+      search: '',
+      type: 'all',
+      category: 'all',
+      account: 'all',
+      period: 'all'
+    },
+    sort: { field: 'date', dir: 'asc' }
+  };
+
+  let undoStack = [];
+  let editingId = null;
+  let formType = 'plus';
+  let editFormType = 'plus';
+  let searchTimer = null;
+  let resizeTimer = null;
+  let idCounter = 0;
+
+  /* ------------------------------------------------------------------
+     3. ХРАНИЛИЩЕ И ОТМЕНА
+     ------------------------------------------------------------------ */
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      const data = JSON.parse(raw);
+      if (data && Array.isArray(data.rows)) {
+        state.rows = data.rows;
+      }
+      if (data && data.settings) {
+        state.settings = Object.assign(defaultSettings(), data.settings);
+        if (!Array.isArray(state.settings.accounts) || state.settings.accounts.length === 0) {
+          state.settings.accounts = DEFAULT_ACCOUNTS.slice();
+        }
+      }
+    } catch (e) {
+      console.warn('Не удалось прочитать сохранённые данные:', e);
+    }
+  }
+
+  function persist() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        rows: state.rows,
+        settings: state.settings
+      }));
+    } catch (e) {
+      toast('⚠️ Не удалось сохранить данные (переполнено хранилище?)', 'error');
+    }
+  }
+
+  function snapshot() {
+    undoStack.push(JSON.stringify({ rows: state.rows, settings: state.settings }));
+    if (undoStack.length > UNDO_LIMIT) {
+      undoStack.shift();
+    }
+  }
+
+  function undo() {
+    if (undoStack.length === 0) {
+      toast('Нечего отменять', 'info');
+      return;
+    }
+    const data = JSON.parse(undoStack.pop());
+    state.rows = data.rows;
+    state.settings = data.settings;
+    applyTheme();
+    applyCurrencyUI();
+    fillAccountSelects();
+    renderAll();
+    toast('↶ Действие отменено', 'success');
+  }
+
+  /* ------------------------------------------------------------------
+     4. УТИЛИТЫ
+     ------------------------------------------------------------------ */
+  function $(id) {
+    return document.getElementById(id);
+  }
+
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function round2(n) {
+    return Math.round(n * 100) / 100;
+  }
+
+  function nextId() {
+    idCounter += 1;
+    return Date.now() * 100 + idCounter;
+  }
+
+  function currency() {
+    const found = CURRENCIES.find(function (c) { return c.code === state.settings.currency; });
+    return found || CURRENCIES[0];
+  }
+
+  function formatMoney(n) {
+    const value = new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 2 }).format(n);
+    return value + ' ' + currency().symbol;
+  }
+
+  function pad(n) {
+    return n < 10 ? '0' + n : String(n);
+  }
+
+  function todayISO() {
+    const d = new Date();
+    return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+  }
+
+  function isoFromDate(d) {
+    return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+  }
+
+  function parseDate(iso) {
+    return new Date(iso + 'T00:00:00');
+  }
+
+  function formatDate(iso) {
+    return parseDate(iso).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  }
+
+  function formatDateShort(iso) {
+    const d = parseDate(iso);
+    return d.getDate() + ' ' + MONTHS_SHORT[d.getMonth()] + ' ' + d.getFullYear();
+  }
+
+  function monthKey(iso) {
+    return iso.slice(0, 7);
+  }
+
+  function monthLabel(key) {
+    const parts = key.split('-');
+    const d = new Date(Number(parts[0]), Number(parts[1]) - 1, 1);
+    const label = d.toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' });
+    return label.charAt(0).toUpperCase() + label.slice(1);
+  }
+
+  /* ------------------------------------------------------------------
+     5. УВЕДОМЛЕНИЯ
+     ------------------------------------------------------------------ */
+  function toast(message, type) {
+    const container = $('toastContainer');
+    const el = document.createElement('div');
+    el.className = 'toast ' + (type || 'info');
+    const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️';
+    const text = document.createElement('span');
+    text.textContent = message;
+    const iconEl = document.createElement('span');
+    iconEl.textContent = icon;
+    el.appendChild(iconEl);
+    el.appendChild(text);
+    container.appendChild(el);
+    setTimeout(function () {
+      el.classList.add('out');
+      setTimeout(function () { el.remove(); }, 260);
+    }, 3200);
+  }
+
+  /* ------------------------------------------------------------------
+     6. МОДАЛЬНЫЕ ОКНА
+     ------------------------------------------------------------------ */
+  function openModal(id) {
+    $(id).classList.add('open');
+  }
+
+  function closeModal(id) {
+    $(id).classList.remove('open');
+  }
+
+  /* ------------------------------------------------------------------
+     7. ТЕМА И ВАЛЮТА
+     ------------------------------------------------------------------ */
+  function applyTheme() {
+    document.documentElement.setAttribute('data-theme', state.settings.theme);
+    $('themeToggle').textContent = state.settings.theme === 'dark' ? '🌙' : '☀️';
+    document.querySelectorAll('.theme-option').forEach(function (btn) {
+      btn.classList.toggle('active', btn.dataset.themeValue === state.settings.theme);
+    });
+  }
+
+  function toggleTheme() {
+    snapshot();
+    state.settings.theme = state.settings.theme === 'dark' ? 'light' : 'dark';
+    applyTheme();
+    persist();
+    renderCharts();
+    toast(state.settings.theme === 'dark' ? '🌙 Тёмная тема включена' : '☀️ Светлая тема включена', 'info');
+  }
+
+  function applyCurrencyUI() {
+    const symbol = currency().symbol;
+    $('currencySign').textContent = symbol;
+    $('eCurrencySign').textContent = symbol;
+    const select = $('currencySelect');
+    select.innerHTML = CURRENCIES.map(function (c) {
+      return '<option value="' + c.code + '"' + (c.code === state.settings.currency ? ' selected' : '') + '>' +
+        esc(c.label) + '</option>';
+    }).join('');
+  }
+
+  /* ------------------------------------------------------------------
+     8. СПИСКИ
+     ------------------------------------------------------------------ */
+  function fillCategorySelect(selectEl, type, selected) {
+    const list = type === 'plus' ? INCOME_CATEGORIES : EXPENSE_CATEGORIES;
+    selectEl.innerHTML = list.map(function (c) {
+      return '<option' + (c === selected ? ' selected' : '') + '>' + esc(c) + '</option>';
+    }).join('');
+  }
+
+  function fillAccountSelects() {
+    const accounts = state.settings.accounts;
+    const html = accounts.map(function (a) { return '<option>' + esc(a) + '</option>'; }).join('');
+    $('fAccount').innerHTML = html;
+    $('eAccount').innerHTML = html;
+    $('accountFilter').innerHTML = '<option value="all">Все счета</option>' + html;
+    if (state.filters.account !== 'all' && accounts.indexOf(state.filters.account) === -1) {
+      state.filters.account = 'all';
+      $('accountFilter').value = 'all';
+    }
+  }
+
+  function fillCategoryFilter() {
+    const html = ALL_CATEGORIES.map(function (c) {
+      return '<option value="' + esc(c) + '">' + esc(c) + '</option>';
+    }).join('');
+    $('categoryFilter').innerHTML = '<option value="all">Все категории</option>' + html;
+  }
+
+  /* ------------------------------------------------------------------
+     9. ФИЛЬТРЫ И СОРТИРОВКА
+     ------------------------------------------------------------------ */
+  function periodStartISO() {
+    const now = new Date();
+    const p = state.filters.period;
+    if (p === 'month') return isoFromDate(new Date(now.getFullYear(), now.getMonth(), 1));
+    if (p === 'prev3') return isoFromDate(new Date(now.getFullYear(), now.getMonth() - 2, 1));
+    if (p === 'year') return isoFromDate(new Date(now.getFullYear(), 0, 1));
+    if (p === 'last365') {
+      const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 364);
+      return isoFromDate(d);
+    }
+    return null;
+  }
+
+  function periodLabel() {
+    const p = state.filters.period;
+    if (p === 'month') return 'Текущий месяц';
+    if (p === 'prev3') return 'Последние 3 месяца';
+    if (p === 'year') return 'Текущий год';
+    if (p === 'last365') return 'Последние 365 дней';
+    return 'Весь период';
+  }
+
+  function getBaseRows() {
+    let rows = state.rows.slice();
+
+    if (state.filters.account !== 'all') {
+      rows = rows.filter(function (r) { return r.account === state.filters.account; });
+    }
+
+    const start = periodStartISO();
+    if (start) {
+      rows = rows.filter(function (r) { return r.date >= start; });
+    }
+
+    return rows;
+  }
+
+  function getDisplayedRows() {
+    let rows = getBaseRows();
+
+    if (state.filters.type !== 'all') {
+      rows = rows.filter(function (r) { return r.type === state.filters.type; });
+    }
+    if (state.filters.category !== 'all') {
+      rows = rows.filter(function (r) { return r.category === state.filters.category; });
+    }
+    if (state.filters.search) {
+      const q = state.filters.search.toLowerCase();
+      rows = rows.filter(function (r) {
+        return r.comment.toLowerCase().indexOf(q) !== -1 ||
+               r.category.toLowerCase().indexOf(q) !== -1 ||
+               r.account.toLowerCase().indexOf(q) !== -1;
+      });
+    }
+
+    const field = state.sort.field;
+    const dir = state.sort.dir === 'asc' ? 1 : -1;
+    rows.sort(function (a, b) {
+      let cmp = 0;
+      if (field === 'date') {
+        cmp = a.date.localeCompare(b.date);
+      } else if (field === 'amount') {
+        cmp = a.amount - b.amount;
+      } else if (field === 'comment') {
+        cmp = a.comment.localeCompare(b.comment, 'ru', { sensitivity: 'base' });
+      }
+      if (cmp === 0) cmp = a.id - b.id;
+      return cmp * dir;
+    });
+
+    return rows;
+  }
+
+  /* ------------------------------------------------------------------
+     10. ГРУППИРОВКА ПО МЕСЯЦАМ
+     ------------------------------------------------------------------ */
+  function groupRows(rows) {
+    const groups = [];
+    let current = null;
+    rows.forEach(function (r) {
+      const key = monthKey(r.date);
+      if (!current || current.key !== key) {
+        current = { key: key, rows: [] };
+        groups.push(current);
+      }
+      current.rows.push(r);
+    });
+    return groups;
+  }
+
+  /* ------------------------------------------------------------------
+     11. РЕНДЕР: СВОДКА
+     ------------------------------------------------------------------ */
+  function renderSummary(rows) {
+    let plus = 0, minus = 0, plusCount = 0, minusCount = 0;
+    rows.forEach(function (r) {
+      if (r.type === 'plus') {
+        plus += r.amount;
+        plusCount += 1;
+      } else {
+        minus += r.amount;
+        minusCount += 1;
+      }
+    });
+    const total = plus - minus;
+    const count = rows.length;
+
+    const totalEl = $('sumTotal');
+    totalEl.textContent = formatMoney(total);
+    totalEl.className = 'sum-value ' + (total > 0 ? 'is-positive' : total < 0 ? 'is-negative' : 'is-zero');
+
+    const scope = state.filters.account === 'all'
+      ? 'все счета · ' + periodLabel().toLowerCase()
+      : 'счёт «' + state.filters.account + '» · ' + periodLabel().toLowerCase();
+    $('sumTotalSub').textContent = scope;
+
+    $('sumPlus').textContent = formatMoney(plus);
+    $('sumPlusCount').textContent = 'операций: ' + plusCount;
+    $('sumMinus').textContent = formatMoney(minus);
+    $('sumMinusCount').textContent = 'операций: ' + minusCount;
+    $('sumCount').textContent = count;
+    $('sumCountSub').textContent = count > 0
+      ? 'средний чек: ' + formatMoney((plus + minus) / count)
+      : 'средний чек: —';
+  }
+
+  /* ------------------------------------------------------------------
+     12. РЕНДЕР: ТАБЛИЦА
+     ------------------------------------------------------------------ */
+  function renderTable(rows) {
+    const body = $('rowsBody');
+    const emptyEl = $('emptyState');
+
+    if (rows.length === 0) {
+      body.innerHTML = '';
+      emptyEl.classList.remove('hidden');
+      $('rowsInfo').textContent = '0 записей';
+      return;
+    }
+    emptyEl.classList.add('hidden');
+
+    const byDate = state.sort.field === 'date';
+    const groups = byDate
+      ? groupRows(rows)
+      : [{ key: null, rows: rows }];
+
+    let running = 0;
+    let totalPlus = 0;
+    let totalMinus = 0;
+    let html = '';
+
+    groups.forEach(function (group) {
+      let gPlus = 0;
+      let gMinus = 0;
+      group.rows.forEach(function (r) {
+        if (r.type === 'plus') gPlus += r.amount;
+        else gMinus += r.amount;
+      });
+
+      if (group.key) {
+        html += '<tr class="group-row"><td colspan="8">' +
+          '<span class="group-name">' + esc(monthLabel(group.key)) + '</span>' +
+          '<span class="group-stats">' +
+          '<span class="group-plus">+' + formatMoney(gPlus) + '</span>' +
+          '<span class="group-minus">−' + formatMoney(gMinus) + '</span>' +
+          '<span class="group-net">= ' + formatMoney(gPlus - gMinus) + '</span>' +
+          '</span></td></tr>';
+      }
+
+      group.rows.forEach(function (r) {
+        const value = (r.type === 'plus' ? 1 : -1) * r.amount;
+        running += value;
+        if (r.type === 'plus') totalPlus += r.amount;
+        else totalMinus += r.amount;
+
+        const totalCls = running > 0 ? 'high' : running < 0 ? 'low' : '';
+        const amountCell = r.type === 'plus'
+          ? '<td class="num amount-plus">+' + formatMoney(r.amount) + '</td><td class="num"></td>'
+          : '<td class="num"></td><td class="num amount-minus">−' + formatMoney(r.amount) + '</td>';
+
+        html += '<tr data-id="' + r.id + '">' +
+          '<td class="date-cell" title="' + esc(formatDateShort(r.date)) + '">' + formatDate(r.date) + '</td>' +
+          amountCell +
+          '<td><span class="chip chip-cat">' + esc(r.category) + '</span></td>' +
+          '<td class="comment-cell"><span class="comment-text" title="' + esc(r.comment) + '">' + esc(r.comment) + '</span></td>' +
+          '<td><span class="chip chip-account">' + esc(r.account) + '</span></td>' +
+          '<td class="num total-cell ' + totalCls + '">' + formatMoney(running) + '</td>' +
+          '<td class="num"><div class="row-actions">' +
+          '<button type="button" class="row-btn edit" data-action="edit" title="Редактировать">✏️</button>' +
+          '<button type="button" classrow-delete-placeholder" style="display:none"></button>' +
+          '<button type="button" class="row-btn delete" data-action="delete" title="Удалить">🗑</button>' +
+          '</div></td>' +
+          '</tr>';
+      });
+    });
+
+    const finalCls = running > 0 ? 'high' : running < 0 ? 'low' : '';
+    html += '<tr class="final-row">' +
+      '<td class="label-cell">ИТОГО</td>' +
+      '<td class="num text-green">+' + formatMoney(totalPlus) + '</td>' +
+      '<td class="num text-red">−' + formatMoney(totalMinus) + '</td>' +
+      '<td></td><td></td><td></td>' +
+      '<td class="num total-cell ' + finalCls + '">' + formatMoney(running) + '</td>' +
+      '<td></td></tr>';
+
+    body.innerHTML = html;
+
+    const dates = rows.map(function (r) { return r.date; }).sort();
+    const from = dates[0];
+    const to = dates[dates.length - 1];
+    $('rowsInfo').textContent = rows.length + ' записей · период: ' +
+      formatDate(from) + ' — ' + formatDate(to);
+  }
+
+  /* ------------------------------------------------------------------
+     13. РЕНДЕР: ПОКАЗАТЕЛИ
+     ------------------------------------------------------------------ */
+  function renderStats(rows) {
+    const chips = $('statChips');
+    const topCats = $('topCats');
+    $('statsPeriodHint').textContent = periodLabel();
+
+    if (rows.length === 0) {
+      chips.innerHTML = '<div class="stat-chip"><span class="stat-chip-label">Данных</span>' +
+        '<span class="stat-chip-value">нет</span></div>';
+      topCats.innerHTML = '<span class="text-muted">Добавьте операции, чтобы увидеть разбор.</span>';
+      return;
+    }
+
+    const days = new Set(rows.map(function (r) { return r.date; }));
+    const dayCount = days.size;
+
+    let plusSum = 0;
+    let minusSum = 0;
+    let maxPlus = null;
+    let maxMinus = null;
+    const byMonth = {};
+
+    rows.forEach(function (r) {
+      if (r.type === 'plus') {
+        plusSum += r.amount;
+        if (!maxPlus || r.amount > maxPlus.amount) maxPlus = r;
+      } else {
+        minusSum += r.amount;
+        if (!maxMinus || r.amount > maxMinus.amount) maxMinus = r;
+      }
+      const key = monthKey(r.date);
+      if (!byMonth[key]) byMonth[key] = 0;
+      byMonth[key] += (r.type === 'plus' ? 1 : -1) * r.amount;
+    });
+
+    const monthKeys = Object.keys(byMonth).sort(function (a, b) {
+      return byMonth[b] - byMonth[a];
+    });
+    const bestMonth = monthKeys[0];
+
+    function chip(label, value) {
+      return '<div class="stat-chip"><span class="stat-chip-label">' + label + '</span>' +
+        '<span class="stat-chip-value" title="' + esc(String(value)) + '">' + esc(String(value)) + '</span></div>';
+    }
+
+    chips.innerHTML =
+      chip('Средний доход в день', formatMoney(plusSum / dayCount)) +
+      chip('Средний расход в день', formatMoney(minusSum / dayCount)) +
+      chip('Крупнейший доход', maxPlus ? formatMoney(maxPlus.amount) + ' · ' + maxPlus.comment : '—') +
+      chip('Крупнейший расход', maxMinus ? formatMoney(maxMinus.amount) + ' · ' + maxMinus.comment : '—') +
+      chip('Дней с записями', dayCount + ' из ' + getDaysSpan(rows)) +
+      chip('Лучший месяц', bestMonth ? monthLabel(bestMonth) + ' (' + formatMoney(byMonth[bestMonth]) + ')' : '—');
+
+    const catSums = {};
+    rows.filter(function (r) { return r.type === 'minus'; }).forEach(function (r) {
+      if (!catSums[r.category]) catSums[r.category] = 0;
+      catSums[r.category] += r.amount;
+    });
+
+    const top = Object.keys(catSums)
+      .map(function (k) { return { name: k, sum: catSums[k] }; })
+      .sort(function (a, b) { return b.sum - a.sum; })
+      .slice(0, 5);
+
+    if (top.length === 0) {
+      topCats.innerHTML = '<span class="text-muted">Расходов за этот период нет.</span>';
+      return;
+    }
+
+    const maxSum = top[0].sum;
+    topCats.innerHTML = top.map(function (t, i) {
+      const pct = maxSum ? Math.round(t.sum / maxSum * 100) : 0;
+      return '<div class="top-cat">' +
+        '<span class="top-cat-name" title="' + esc(t.name) + '">' + esc(t.name) + '</span>' +
+        '<span class="top-cat-bar"><span class="top-cat-fill" style="width:' + pct + '%;background:' +
+        CHART_COLORS[i % CHART_COLORS.length] + '"></span></span>' +
+        '<span class="top-cat-value">' + formatMoney(t.sum) + '</span>' +
+        '</div>';
+    }).join('');
+  }
+
+  function getDaysSpan(rows) {
+    const dates = rows.map(function (r) { return r.date; }).sort();
+    if (dates.length < 2) return 1;
+    const first = parseDate(dates[0]);
+    const last = parseDate(dates[dates.length - 1]);
+    return Math.max(1, Math.round((last - first) / 86400000) + 1);
+  }
+
+  /* ------------------------------------------------------------------
+     14. РЕНДЕР: ГРАФИКИ
+     ------------------------------------------------------------------ */
+  function setupCanvas(canvas) {
+    const dpr = window.devicePixelRatio || 1;
+    const cssW = canvas.clientWidth || 320;
+    const cssH = canvas.clientHeight || 220;
+    canvas.width = Math.round(cssW * dpr);
+    canvas.height = Math.round(cssH * dpr);
+    const ctx = canvas.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, cssW, cssH);
+    return { ctx: ctx, w: cssW, h: cssH };
+  }
+
+  function cssVar(name) {
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim() || '#888888';
+  }
+
+  function drawDonut(rows) {
+    const canvas = $('donutCanvas');
+    const legendEl = $('donutLegend');
+    const emptyEl = $('donutEmpty');
+    const box = setupCanvas(canvas);
+
+    const expByCat = {};
+    rows.filter(function (r) { return r.type === 'minus'; }).forEach(function (r) {
+      if (!expByCat[r.category]) expByCat[r.category] = 0;
+      expByCat[r.category] += r.amount;
+    });
+
+    const totalAll = Object.keys(expByCat).reduce(function (s, k) { return s + expByCat[k]; }, 0);
+    const cats = Object.keys(expByCat)
+      .map(function (k) { return { label: k, value: expByCat[k] }; })
+      .sort(function (a, b) { return b.value - a.value; })
+      .slice(0, 8);
+
+    if (totalAll > 0 && cats.length < Object.keys(expByCat).length) {
+      const shown = cats.reduce(function (s, c) { return s + c.value; }, 0);
+      cats.push({ label: 'Прочее', value: totalAll - shown });
+    }
+
+    if (totalAll === 0) {
+      emptyEl.classList.remove('hidden');
+      legendEl.innerHTML = '';
+      return;
+    }
+    emptyEl.classList.add('hidden');
+
+    const ctx = box.ctx;
+    const cx = box.w / 2;
+    const cy = box.h / 2;
+    const R = Math.min(box.w, box.h) / 2 - 8;
+    const inner = R * 0.62;
+
+    let start = -Math.PI / 2;
+    cats.forEach(function (c, i) {
+      const angle = (c.value / totalAll) * Math.PI * 2;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.arc(cx, cy, R, start, start + angle);
+      ctx.closePath();
+      ctx.fillStyle = CHART_COLORS[i % CHART_COLORS.length];
+      ctx.fill();
+      start += angle;
+    });
+
+    ctx.beginPath();
+    ctx.arc(cx, cy, inner, 0, Math.PI * 2);
+    ctx.fillStyle = cssVar('--canvas-hole');
+    ctx.fill();
+
+    ctx.fillStyle = cssVar('--text');
+    ctx.font = '700 13px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('Расходы', cx, cy - 10);
+    ctx.font = '600 11px sans-serif';
+    ctx.fillStyle = cssVar('--muted');
+    ctx.fillText(formatMoney(totalAll), cx, cy + 10);
+
+    legendEl.innerHTML = cats.map(function (c, i) {
+      const pct = Math.round(c.value / totalAll * 100);
+      return '<span class="legend-item">' +
+        '<span class="legend-dot" style="background:' + CHART_COLORS[i % CHART_COLORS.length] + '"></span>' +
+        esc(c.label) + ' · ' + pct + '%</span>';
+    }).join('');
+  }
+
+  function drawBars(rows) {
+    const canvas = $('barCanvas');
+    const emptyEl = $('barEmpty');
+    const box = setupCanvas(canvas);
+    const ctx = box.ctx;
+
+    const now = new Date();
+    const months = [];
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      months.push({
+        key: d.getFullYear() + '-' + pad(d.getMonth() + 1),
+        label: MONTHS_SHORT[d.getMonth()] + ' ' + String(d.getFullYear()).slice(2)
+      });
+    }
+
+    const data = months.map(function (m) {
+      let inc = 0;
+      let exp = 0;
+      rows.forEach(function (r) {
+        if (monthKey(r.date) !== m.key) return;
+        if (r.type === 'plus') inc += r.amount;
+        else exp += r.amount;
+      });
+      return { label: m.label, inc: inc, exp: exp };
+    });
+
+    const hasData = data.some(function (d) { return d.inc > 0 || d.exp > 0; });
+    if (!hasData) {
+      emptyEl.classList.remove('hidden');
+      return;
+    }
+    emptyEl.classList.add('hidden');
+
+    const maxVal = Math.max.apply(null, data.map(function (d) { return Math.max(d.inc, d.exp); })) || 1;
+    const padL = 8;
+    const padR = 8;
+    const padT = 18;
+    const padB = 26;
+    const chartW = box.w - padL - padR;
+    const chartH = box.h - padT - padB;
+    const slot = chartW / months.length;
+    const barW = Math.min(22, slot * 0.28);
+    const gap = 3;
+
+    ctx.strokeStyle = cssVar('--canvas-grid');
+    ctx.lineWidth = 1;
+    for (let i = 0; i <= 4; i++) {
+      const y = padT + chartH - (chartH * i / 4);
+      ctx.beginPath();
+      ctx.moveTo(padL, y);
+      ctx.lineTo(box.w - padR, y);
+      ctx.stroke();
+    }
+
+    data.forEach(function (d, i) {
+      const center = padL + slot * i + slot / 2;
+      const incH = (d.inc / maxVal) * chartH;
+      const expH = (d.exp / maxVal) * chartH;
+
+      ctx.fillStyle = cssVar('--green');
+      ctx.fillRect(center - barW - gap / 2, padT + chartH - incH, barW, incH);
+      ctx.fillStyle = cssVar('--red');
+      ctx.fillRect(center + gap / 2, padT + chartH - expH, barW, expH);
+
+      ctx.fillStyle = cssVar('--muted');
+      ctx.font = '10px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      ctx.fillText(d.label, center, padT + chartH + 6);
+    });
+  }
+
+  function drawLine(rows) {
+    const canvas = $('lineCanvas');
+    const emptyEl = $('lineEmpty');
+    const box = setupCanvas(canvas);
+    const ctx = box.ctx;
+
+    const sorted = rows.slice().sort(function (a, b) { return a.date.localeCompare(b.date); });
+    if (sorted.length < 2) {
+      emptyEl.classList.remove('hidden');
+      return;
+    }
+    emptyEl.classList.add('hidden');
+
+    const byDay = {};
+    const order = [];
+    sorted.forEach(function (r) {
+      if (!byDay[r.date]) {
+        byDay[r.date] = 0;
+        order.push(r.date);
+      }
+      byDay[r.date] += (r.type === 'plus' ? 1 : -1) * r.amount;
+    });
+
+    let acc = 0;
+    const points = order.map(function (date) {
+      acc += byDay[date];
+      return { date: date, value: acc };
+    });
+
+    const values = points.map(function (p) { return p.value; });
+    const maxV = Math.max.apply(null, values);
+    const minV = Math.min.apply(null, values);
+    const span = (maxV - minV) || 1;
+
+    const padL = 8;
+    const padR = 8;
+    const padT = 18;
+    const padB = 26;
+    const chartW = box.w - padL - padR;
+    const chartH = box.h - padT - padB;
+
+    function yFor(v) {
+      return padT + chartH - ((v - minV) / span) * chartH;
+    }
+
+    // нулевая линия
+    if (minV < 0 && maxV > 0) {
+      ctx.strokeStyle = cssVar('--muted-2');
+      ctx.setLineDash([4, 4]);
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(padL, yFor(0));
+      ctx.lineTo(box.w - padR, yFor(0));
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    function xFor(i) {
+      return padL + (points.length === 1 ? chartW / 2 : (chartW * i) / (points.length - 1));
+    }
+
+    // заливка
+    ctx.beginPath();
+    ctx.moveTo(xFor(0), padT + chartH);
+    points.forEach(function (p, i) {
+      ctx.lineTo(xFor(i), yFor(p.value));
+    });
+    ctx.lineTo(xFor(points.length - 1), padT + chartH);
+    ctx.closePath();
+    const grad = ctx.createLinearGradient(0, padT, 0, padT + chartH);
+    grad.addColorStop(0, 'rgba(124, 108, 255, 0.35)');
+    grad.addColorStop(1, 'rgba(124, 108, 255, 0.02)');
+    ctx.fillStyle = grad;
+    ctx.fill();
+
+    // линия
+    ctx.beginPath();
+    points.forEach(function (p, i) {
+      const x = xFor(i);
+      const y = yFor(p.value);
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    });
+    ctx.strokeStyle = cssVar('--accent');
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // последняя точка
+    const lastX = xFor(points.length - 1);
+    const lastY = yFor(points[points.length - 1].value);
+    ctx.beginPath();
+    ctx.arc(lastX, lastY, 4, 0, Math.PI * 2);
+    ctx.fillStyle = cssVar('--accent');
+    ctx.fill();
+
+    // подписи по оси X
+    ctx.fillStyle = cssVar('--muted');
+    ctx.font = '10px sans-serif';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'top';
+    ctx.fillText(formatDateShort(points[0].date).replace(' ' + new Date().getFullYear(), ''), padL, padT + chartH + 6);
+    ctx.textAlign = 'right';
+    ctx.fillText(formatDateShort(points[points.length - 1].date).replace(' ' + new Date().getFullYear(), ''), box.w - padR, padT + chartH + 6);
+  }
+
+  function renderCharts() {
+    const base = getBaseRows();
+    drawDonut(base);
+    drawBars(base);
+    drawLine(base);
+  }
+
+  /* ------------------------------------------------------------------
+     15. ГЛАВНЫЙ РЕНДЕР
+     ------------------------------------------------------------------ */
+  function renderAll() {
+    const rows = getDisplayedRows();
+    const base = getBaseRows();
+    renderSummary(base);
+    renderTable(rows);
+    renderStats(base);
+    renderCharts();
+    $('footerCount').textContent = 'записей в базе: ' + state.rows.length;
+  }
+
+  /* ------------------------------------------------------------------
+     16. ДОБАВЛЕНИЕ
+     ------------------------------------------------------------------ */
+  function addRow(e) {
+    e.preventDefault();
+    const amount = parseFloat($('fAmount').value);
+    const date = $('fDate').value;
+
+    if (!amount || amount <= 0) {
+      toast('Введите сумму больше нуля', 'error');
+      $('fAmount').focus();
+      return;
+    }
+    if (!date) {
+      toast('Выберите дату', 'error');
+      $('fDate').focus();
+      return;
+    }
+
+    const category = $('fCategory').value;
+    const account = $('fAccount').value;
+    let comment = $('fComment').value.trim();
+    if (!comment) {
+      comment = formType === 'plus' ? 'Пополнение' : 'Списание';
+    }
+
+    snapshot();
+    state.rows.push({
+      id: nextId(),
+      date: date,
+      type: formType,
+      amount: round2(amount),
+      category: category,
+      account: account,
+      comment: comment
+    });
+    persist();
+    renderAll();
+
+    e.target.reset();
+    $('fDate').value = todayISO();
+    $('fAmount').value = '';
+    $('fComment').value = '';
+    fillCategorySelect($('fCategory'), formType, null);
+    toast('➕ Операция добавлена: ' + formatMoney(amount), 'success');
+    $('fAmount').focus();
+  }
+
+  /* ------------------------------------------------------------------
+     17. РЕДАКТИРОВАНИЕ И УДАЛЕНИЕ
+     ------------------------------------------------------------------ */
+  function openEditModal(id) {
+    const row = state.rows.find(function (r) { return r.id === id; });
+    if (!row) return;
+    editingId = id;
+    editFormType = row.type;
+
+    $('eDate').value = row.date;
+    $('eAmount').value = row.amount;
+    $('eComment').value = row.comment;
+    fillCategorySelect($('eCategory'), row.type, row.category);
+    $('eAccount').value = row.account;
+
+    document.querySelectorAll('#editForm .type-btn').forEach(function (btn) {
+      btn.classList.toggle('active', btn.dataset.type === editFormType);
+    });
+    openModal('editModal');
+  }
+
+  function saveEdit(e) {
+    e.preventDefault();
+    const row = state.rows.find(function (r) { return r.id === editingId; });
+    if (!row) return;
+
+    const amount = parseFloat($('eAmount').value);
+    const date = $('eDate').value;
+    if (!amount || amount <= 0) {
+      toast('Сумма должна быть больше нуля', 'error');
+      return;
+    }
+    if (!date) {
+      toast('Выберите дату', 'error');
+      return;
+    }
+
+    snapshot();
+    row.date = date;
+    row.type = editFormType;
+    row.amount = round2(amount);
+    row.category = $('eCategory').value;
+    row.account = $('eAccount').value;
+    const comment = $('eComment').value.trim();
+    row.comment = comment || (row.type === 'plus' ? 'Пополнение' : 'Списание');
+
+    persist();
+    renderAll();
+    closeModal('editModal');
+    toast('✏️ Запись обновлена', 'success');
+  }
+
+  function deleteRow(id) {
+    const row = state.rows.find(function (r) { return r.id === id; });
+    if (!row) return;
+    if (!confirm('Удалить запись «' + row.comment + '» от ' + formatDate(row.date) + '?')) return;
+    snapshot();
+    state.rows = state.rows.filter(function (r) { return r.id !== id; });
+    persist();
+    renderAll();
+    toast('🗑 Запись удалена', 'info');
+  }
+
+  /* ------------------------------------------------------------------
+     18. CSV: ЭКСПОРТ И ИМПОРТ
+     ------------------------------------------------------------------ */
+  function csvCell(value) {
+    return '"' + String(value == null ? '' : value).replace(/"/g, '""') + '"';
+  }
+
+  function downloadFile(filename, content, mime) {
+    const blob = new Blob([content], { type: mime });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 500);
+  }
+
+  function exportCSV() {
+    const rows = getDisplayedRows();
+    if (rows.length === 0) {
+      toast('Таблица пуста — экспортировать нечего', 'error');
+      return;
+    }
+
+    const sorted = rows.slice().sort(function (a, b) {
+      return a.date.localeCompare(b.date) || a.id - b.id;
+    });
+
+    const lines = ['Дата;Тип;Сумма;Категория;Комментарий;Счёт;Итог'];
+    let running = 0;
+
+    sorted.forEach(function (r) {
+      running += (r.type === 'plus' ? 1 : -1) * r.amount;
+      const type = r.type === 'plus' ? '+' : '-';
+      const amount = (r.type === 'plus' ? '' : '-') + r.amount.toFixed(2).replace('.', ',');
+      lines.push([
+        r.date + 'T00:00:00',
+        type,
+        amount,
+        csvCell(r.category),
+        csvCell(r.comment),
+        csvCell(r.account),
+        running.toFixed(2).replace('.', ',')
+      ].join(';'));
+    });
+
+    lines.push(['', '', '', '', csvCell('ИТОГО'), '', running.toFixed(2).replace('.', ',')].join(';'));
+
+    downloadFile('papa-bank-pro-' + todayISO() + '.csv', '\ufeff' + lines.join('\n'), 'text/csv;charset=utf-8');
+    toast('⬇ Экспортировано записей: ' + rows.length, 'success');
+  }
+
+  function splitCSVLine(line) {
+    const out = [];
+    let cur = '';
+    let inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (inQuotes) {
+        if (ch === '"') {
+          if (line[i + 1] === '"') { cur += '"'; i++; }
+          else inQuotes = false;
+        } else {
+          cur += ch;
+        }
+      } else if (ch === '"') {
+        inQuotes = true;
+      } else if (ch === ';') {
+        out.push(cur);
+        cur = '';
+      } else {
+        cur += ch;
+      }
+    }
+    out.push(cur);
+    return out;
+  }
+
+  function importCSV(file) {
+    const reader = new FileReader();
+    reader.onload = function (ev) {
+      try {
+        const text = String(ev.target.result);
+        const lines = text.split(/\r?\n/).filter(function (l) { return l.trim() !== ''; });
+
+        if (lines.length < 2) {
+          toast('Файл пуст или имеет неверный формат', 'error');
+          return;
         }
 
-        function addRow() { createRow(); saveData(); }
+        const header = lines[0].replace(/^\ufeff/, '').split(';').map(function (h) {
+          return h.trim().toLowerCase();
+        });
 
-        function clearTable() {
-            if (confirm("Удалить все записи?")) {
-                tableBody.innerHTML = '';
-                addRow(); saveData();
-            }
+        const idxDate = header.indexOf('дата');
+        const idxType = header.indexOf('тип');
+        const idxAmount = header.indexOf('сумма');
+        const idxCategory = header.indexOf('категория');
+        const idxComment = header.indexOf('комментарий');
+        const idxAccount = header.indexOf('счёт');
+
+        if (idxDate === -1 || idxAmount === -1) {
+          toast('Не найдены колонки «Дата» и «Сумма» — нужен файл нашего экспорта', 'error');
+          return;
         }
 
-        function calculateTotals() {
-            let totalIncome = 0, totalExpense = 0, totalRecords = 0, totalAllNumbers = 0;
-            const rows = tableBody.querySelectorAll('tr');
-            
-            rows.forEach(row => {
-                const dateText = row.cells[0].textContent.trim();
-                const incomeCell = row.cells[1].textContent;
-                const expenseCell = row.cells[2].textContent;
-                const commentText = row.cells[3].textContent.trim();
+        const imported = [];
+        let conflicts = 0;
+        let skipped = 0;
 
-                const incomeVal = parseFloat(incomeCell) || 0;
-                const expenseVal = parseFloat(expenseCell) || 0;
+        for (let i = 1; i < lines.length; i++) {
+          const parts = splitCSVLine(lines[i]);
+          if (parts.length < 3) { skipped++; continue; }
 
-                if (dateText !== '' || incomeVal !== 0 || expenseVal !== 0 || commentText !== '') totalRecords++;
-                totalIncome += incomeVal;
-                totalExpense += expenseVal;
-                totalAllNumbers += (incomeVal + expenseVal);
-            });
+          const date = String(parts[idxDate] || '').replace('T00:00:00', '').trim();
+          if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) { skipped++; continue; }
 
-            const balance = totalIncome - totalExpense;
+          const typeRaw = idxType === -1 ? '' : String(parts[idxType] || '').trim();
+          const type = (typeRaw === '+' || typeRaw === 'plus' || typeRaw === 'доход') ? 'plus' : 'minus';
 
-            document.getElementById('total-income').textContent = totalIncome;
-            document.getElementById('total-expense').textContent = totalExpense;
-            document.getElementById('total-balance').textContent = balance;
-            document.getElementById('total-records').textContent = totalRecords;
-            document.getElementById('total-all-numbers').textContent = totalAllNumbers;
+          const amountRaw = String(parts[idxAmount]).trim().replace(/\s/g, '').replace(',', '.');
+          const amount = parseFloat(amountRaw);
+          if (!amount || amount <= 0) { skipped++; continue; }
 
-            const balanceEl = document.getElementById('total-balance');
-            if (balance < 0) {
-                balanceEl.classList.add('value-minus'); balanceEl.classList.remove('value-balance');
-            } else {
-                balanceEl.classList.add('value-balance'); balanceEl.classList.remove('value-minus');
-            }
-            saveData();
+          const category = idxCategory === -1 ? '' : String(parts[idxCategory] || '').trim();
+          let comment = idxComment === -1 ? '' : String(parts[idxComment] || '').trim();
+          if (!comment) comment = type === 'plus' ? 'Пополнение' : 'Списание';
+          const account = idxAccount === -1 ? '' : String(parts[idxAccount] || '').trim();
+
+          const isDuplicate = state.rows.some(function (r) {
+            return r.date === date &&
+                   r.type === type &&
+                   Math.abs(r.amount - amount) < 0.005 &&
+                   r.comment === comment;
+          });
+          if (isDuplicate) { conflicts++; continue; }
+
+          imported.push({
+            id: nextId(),
+            date: date,
+            type: type,
+            amount: round2(amount),
+            category: category || 'Прочее',
+            account: account || state.settings.accounts[0] || 'Наличные',
+            comment: comment
+          });
         }
 
-        // --- ЛОГИКА КАЛЬКУЛЯТОРА ПРОЦЕНТОВ (СЛОЖНЫЙ ПРОЦЕНТ) ---
-        function calculatePercent() {
-            const sumInput = document.getElementById('calc-sum').value;
-            const percentInput = document.getElementById('calc-percent').value;
-            
-            const sum = parseFloat(sumInput);
-            const percent = parseFloat(percentInput);
-
-            if (isNaN(sum) || isNaN(percent) || sum <= 0) {
-                alert("Пожалуйста, введи нормальные числа (больше нуля)!");
-                return;
-            }
-
-            // Формула сложного процента: Сумма * (1 + процент/100)^месяцы
-            const rate = 1 + (percent / 100);
-            
-            const res1m = sum * Math.pow(rate, 1);
-            const res3m = sum * Math.pow(rate, 3);
-            const res6m = sum * Math.pow(rate, 6);
-            const res1y = sum * Math.pow(rate, 12);
-
-            // Функция для красивого вывода (округляем до 2 знаков и добавляем пробелы)
-            const formatMoney = (num) => {
-                return num.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-            };
-
-            document.getElementById('res-1m').textContent = formatMoney(res1m);
-            document.getElementById('res-3m').textContent = formatMoney(res3m);
-            document.getElementById('res-6m').textContent = formatMoney(res6m);
-            document.getElementById('res-1y').textContent = formatMoney(res1y);
-
-            // Показываем блок с результатами
-            document.getElementById('calc-results').style.display = 'block';
+        if (imported.length === 0) {
+          toast('Подходящих строк не нашлось (дубли: ' + conflicts + ', пропущено: ' + skipped + ')', 'error');
+          return;
         }
 
-        function saveData() {
-            const rows = tableBody.querySelectorAll('tr');
-            const data = [];
-            rows.forEach(row => {
-                data.push({
-                    date: row.cells[0].textContent, income: row.cells[1].textContent,
-                    expense: row.cells[2].textContent, comment: row.cells[3].textContent
-                });
-            });
-            localStorage.setItem('papaBankData', JSON.stringify(data));
+        snapshot();
+
+        const known = state.settings.accounts.map(function (a) { return a.toLowerCase(); });
+        imported.forEach(function (r) {
+          if (known.indexOf(r.account.toLowerCase()) === -1) {
+            state.settings.accounts.push(r.account);
+            known.push(r.account.toLowerCase());
+          }
+        });
+
+        state.rows = state.rows.concat(imported);
+        persist();
+        fillAccountSelects();
+        renderAll();
+
+        let msg = '⬆ Импортировано: ' + imported.length;
+        if (conflicts) msg += ' · дублей пропущено: ' + conflicts;
+        if (skipped) msg += ' · некорректных строк: ' + skipped;
+        toast(msg, 'success');
+      } catch (err) {
+        console.error(err);
+        toast('Не удалось прочитать файл', 'error');
+      }
+    };
+    reader.onerror = function () { toast('Ошибка чтения файла', 'error'); };
+    reader.readAsText(file, 'utf-8');
+  }
+
+  /* ------------------------------------------------------------------
+     19. БЭКАП И ВОССТАНОВЛЕНИЕ
+     ------------------------------------------------------------------ */
+  function exportBackup() {
+    const data = {
+      app: 'papa-bank-pro',
+      version: 3,
+      exportedAt: new Date().toISOString(),
+      rows: state.rows,
+      settings: state.settings
+    };
+    downloadFile(
+      'papa-bank-pro-backup-' + todayISO() + '.json',
+      JSON.stringify(data, null, 2),
+      'application/json'
+    );
+    toast('💾 Бэкап скачан: ' + state.rows.length + ' записей', 'success');
+  }
+
+  function importBackup(file) {
+    const reader = new FileReader();
+    reader.onload = function (ev) {
+      try {
+        const data = JSON.parse(ev.target.result);
+        if (!data || !Array.isArray(data.rows)) {
+          throw new Error('bad-format');
+        }
+        if (!confirm(
+          'Восстановить данные из бэкапа?\n\n' +
+          'Текущие записи (' + state.rows.length + ') будут ЗАМЕНЕНЫ.\n' +
+          'Прежнее состояние можно вернуть через «Отменить».'
+        )) {
+          return;
         }
 
-        function loadData() {
-            const savedData = localStorage.getItem('papaBankData');
-            if (savedData) {
-                const data = JSON.parse(savedData);
-                data.forEach(rowData => createRow(rowData));
-            } else {
-                for (let i = 0; i < 10; i++) createRow();
-            }
-            calculateTotals(); 
+        snapshot();
+        state.rows = data.rows;
+
+        if (data.settings) {
+          state.settings = Object.assign(defaultSettings(), data.settings);
+          if (!Array.isArray(state.settings.accounts) || state.settings.accounts.length === 0) {
+            state.settings.accounts = DEFAULT_ACCOUNTS.slice();
+          }
         }
 
-        loadData();
-    </script>
+        persist();
+        applyTheme();
+        applyCurrencyUI();
+        fillAccountSelects();
+        renderAll();
+        closeModal('settingsModal');
+        toast('📂 Восстановлено записей: ' + state.rows.length, 'success');
+      } catch (err) {
+        console.error(err);
+        toast('Файл не похож на бэкап Папа-банка', 'error');
+      }
+    };
+    reader.onerror = function () { toast('Ошибка чтения файла', 'error'); };
+    reader.readAsText(file, 'utf-8');
+  }
+
+  /* ------------------------------------------------------------------
+     20. ДЕМО-ДАННЫЕ И ОЧИСТКА
+     ------------------------------------------------------------------ */
+  function loadDemo() {
+    if (state.rows.length > 0 &&
+        !confirm('Сейчас в таблице ' + state.rows.length + ' записей.\nДобавить демо-данные к ним?')) {
+      return;
+    }
+
+    function iso(daysAgo) {
+      const d = new Date();
+      d.setDate(d.getDate() - daysAgo);
+      return isoFromDate(d);
+    }
+
+    const demo = [
+      { d: 0,   t: 'minus', a: 850,   c: 'Продукты',          acc: 'Наличные', m: 'Продукты на неделю' },
+      { d: 1,   t: 'plus',  a: 45000, c: 'Зарплата',         acc: 'Карта',    m: 'Зарплата за месяц' },
+      { d: 2,   t: 'minus', a: 1200,  c: 'Кафе и рестораны', acc: 'Карта',    m: 'Ужин с семьёй' },
+      { d: 4,   t: 'minus', a: 2500,  c: 'ЖКХ и связь',     acc: 'Карта',    m: 'Оплата квартиры' },
+      { d: 5,   t: 'minus', a: 900,   c: 'Продукты',         acc: 'Наличные', m: 'Рынок' },
+      { d: 7,   t: 'minus', a: 1800,  c: 'Развлечения',     acc: 'Карта',    m: 'Кино и боулинг' },
+      { d: 9,   t: 'minus', a: 3200,  c: 'Одежда',          acc: 'Карта',    m: 'Куртка ребёнку' },
+      { d: 12,  t: 'plus',  a: 3000,  c: 'Подработка',      acc: 'Карта',    m: 'Фриланс-заказ' },
+      { d: 14,  t: 'minus', a: 1400,  c: 'Транспорт',       acc: 'Карта',    m: 'Бензин' },
+      { d: 18,  t: 'minus', a: 600,   c: 'Здоровье',        acc: 'Наличные', m: 'Аптека' },
+      { d: 22,  t: 'minus', a: 4000,  c: 'Дом и ремонт',    acc: 'Карта',    m: 'Инструменты' },
+      { d: 26,  t: 'minus', a: 1100,  c: 'Продукты',        acc: 'Наличные', m: 'Закупка на дачу' },
+      { d: 32,  t: 'plus',  a: 5000,  c: 'Подарок',         acc: 'Наличные', m: 'День рождения' },
+      { d: 36,  t: 'minus', a: 2000,  c: 'Дети',            acc: 'Карта',    m: 'Развивающие занятия' },
+      { d: 42,  t: 'minus', a: 950,   c: 'Кафе и рестораны', acc: 'Карта',   m: 'Кофе с коллегами' },
+      { d: 50,  t: 'minus', a: 3000,  c: 'Образование',     acc: 'Карта',    m: 'Онлайн-курс' },
+      { d: 58,  t: 'minus', a: 750,   c: 'Транспорт',       acc: 'Карта',    m: 'Метро и маршрутки' },
+      { d: 64,  t: 'plus',  a: 2000,  c: 'Кэшбэк',          acc: 'Карта',    m: 'Кэшбэк за месяц' },
+      { d: 70,  t: 'minus', a: 1600,  c: 'Развлечения',     acc: 'Карта',    m: 'Концерт' },
+      { d: 78,  t: 'minus', a: 1300,  c: 'Продукты',        acc: 'Наличные', m: 'Продукты' },
+      { d: 85,  t: 'minus', a: 2900,  c: 'Здоровье',        acc: 'Карта',    m: 'Стоматолог' },
+      { d: 92,  t: 'plus',  a: 45000, c: 'Зарплата',        acc: 'Карта',    m: 'Зарплата' },
+      { d: 98,  t: 'minus', a: 2400,  c: 'ЖКХ и связь',     acc: 'Карта',    m: 'Интернет и телефон' },
+      { d: 105, t: 'minus', a: 1700,  c: 'Одежда',          acc: 'Карта',    m: 'Осенние кроссовки' }
+    ];
+
+    snapshot();
+
+   ```html:papa-bank-pro.html
+    let added = 0;
+    demo.forEach(function (d) {
+      state.rows.push({
+        id: nextId(),
+        date: iso(d.d),
+        type: d.t,
+        amount: d.a,
+        category: d.c,
+        account: d.acc,
+        comment: d.m
+      });
+      added += 1;
+    });
+
+    persist();
+    renderAll();
+    toast('✨ Добавлено демо-записей: ' + added, 'success');
+  }
+
+  /* ------------------------------------------------------------------
+     21. ОЧИСТКА ВСЕХ ДАННЫХ
+     ------------------------------------------------------------------ */
+  function clearAll() {
+    if (state.rows.length === 0) {
+      toast('Таблица и так пуста', 'info');
+      return;
+    }
+    if (!confirm(
+      'Удалить ВСЕ операции (' + state.rows.length + ')?\n\n' +
+      'Действие можно отменить кнопкой «↶ Отменить» или Ctrl+Z.'
+    )) {
+      return;
+    }
+    snapshot();
+    state.rows = [];
+    persist();
+    renderAll();
+    toast('🗑 Все операции удалены', 'info');
+  }
+
+  /* ------------------------------------------------------------------
+     22. СЧЕТА
+     ------------------------------------------------------------------ */
+  function accountBalance(name) {
+    return state.rows.reduce(function (sum, r) {
+      if (r.account !== name) return sum;
+      return sum + (r.type === 'plus' ? r.amount : -r.amount);
+    }, 0);
+  }
+
+  function renderAccountsList() {
+    const list = $('accountsList');
+    if (state.settings.accounts.length === 0) {
+      list.innerHTML = '<span class="text-muted">Счетов нет — добавьте первый ниже.</span>';
+      return;
+    }
+    list.innerHTML = state.settings.accounts.map(function (name) {
+      const bal = accountBalance(name);
+      const sign = bal >= 0 ? '+' : '−';
+      return '<div class="account-row">' +
+        '<div>' +
+        '<span class="account-name">' + esc(name) + '</span> ' +
+        '<span class="account-balance">' + sign + formatMoney(Math.abs(bal)) + '</span>' +
+        '</div>' +
+        '<button type="button" class="row-btn delete" data-account="' + esc(name) + '" title="Удалить счёт">✕</button>' +
+        '</div>';
+    }).join('');
+  }
+
+  function addAccount() {
+    const input = $('newAccountInput');
+    const name = input.value.trim();
+    if (!name) {
+      input.focus();
+      return;
+    }
+    const exists = state.settings.accounts.some(function (a) {
+      return a.toLowerCase() === name.toLowerCase();
+    });
+    if (exists) {
+      toast('Такой счёт уже есть', 'error');
+      return;
+    }
+    snapshot();
+    state.settings.accounts.push(name);
+    input.value = '';
+    persist();
+    fillAccountSelects();
+    renderAccountsList();
+    toast('Счёт «' + name + '» добавлен', 'success');
+  }
+
+  function deleteAccount(name) {
+    const count = state.rows.filter(function (r) { return r.account === name; }).length;
+    const message = 'Удалить счёт «' + name + '»?' +
+      (count ? '\nЕго операции (' + count + ') переедут на первый оставшийся счёт.' : '');
+    if (!confirm(message)) return;
+
+    snapshot();
+    const others = state.settings.accounts.filter(function (a) { return a !== name; });
+    const target = others[0] || 'Наличные';
+    state.settings.accounts = others.length ? others : ['Наличные'];
+    state.rows.forEach(function (r) {
+      if (r.account === name) r.account = target;
+    });
+    persist();
+    fillAccountSelects();
+    renderAccountsList();
+    renderAll();
+    toast('Счёт «' + name + '» удалён', 'info');
+  }
+
+  /* ------------------------------------------------------------------
+     23. ПЕРЕКЛЮЧАТЕЛИ ТИПА (+ / −)
+     ------------------------------------------------------------------ */
+  function wireTypeToggles() {
+    document.querySelectorAll('.type-toggle').forEach(function (toggle) {
+      toggle.querySelectorAll('.type-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          toggle.querySelectorAll('.type-btn').forEach(function (b) {
+            b.classList.toggle('active', b === btn);
+          });
+          const type = btn.dataset.type;
+          if (toggle.closest('#addForm')) {
+            formType = type;
+            fillCategorySelect($('fCategory'), formType, null);
+          } else {
+            editFormType = type;
+            fillCategorySelect($('eCategory'), editFormType, null);
+          }
+        });
+      });
+    });
+  }
+
+  /* ------------------------------------------------------------------
+     24. ФИЛЬТРЫ И СОРТИРОВКА
+     ------------------------------------------------------------------ */
+  function wireFilters() {
+    $('searchInput').addEventListener('input', function () {
+      const input = this;
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(function () {
+        state.filters.search = input.value.trim().toLowerCase();
+        renderAll();
+      }, 180);
+    });
+
+    document.querySelectorAll('#typePills .pill').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        state.filters.type = btn.dataset.filter;
+        document.querySelectorAll('#typePills .pill').forEach(function (b) {
+          b.classList.toggle('active', b === btn);
+        });
+        renderAll();
+      });
+    });
+
+    $('periodFilter').addEventListener('change', function () {
+      state.filters.period = this.value;
+      renderAll();
+    });
+
+    $('categoryFilter').addEventListener('change', function () {
+      state.filters.category = this.value;
+      renderAll();
+    });
+
+    $('accountFilter').addEventListener('change', function () {
+      state.filters.account = this.value;
+      renderAll();
+    });
+
+    $('sortSelect').addEventListener('change', function () {
+      const parts = this.value.split('-');
+      state.sort.field = parts[0];
+      state.sort.dir = parts[1];
+      renderAll();
+    });
+  }
+
+  /* ------------------------------------------------------------------
+     25. СОБЫТИЯ ТАБЛИЦЫ
+     ------------------------------------------------------------------ */
+  function wireTable() {
+    const body = $('rowsBody');
+
+    body.addEventListener('click', function (e) {
+      const btn = e.target.closest('.row-btn');
+      if (!btn) return;
+      const tr = e.target.closest('tr[data-id]');
+      if (!tr) return;
+      const id = Number(tr.dataset.id);
+      if (btn.dataset.action === 'edit') {
+        openEditModal(id);
+      } else if (btn.dataset.action === 'delete') {
+        deleteRow(id);
+      }
+    });
+
+    body.addEventListener('dblclick', function (e) {
+      const tr = e.target.closest('tr[data-id]');
+      if (!tr) return;
+      openEditModal(Number(tr.dataset.id));
+    });
+  }
+
+  /* ------------------------------------------------------------------
+     26. ПАНЕЛЬ ИНСТРУМЕНТОВ И ШАПКА
+     ------------------------------------------------------------------ */
+  function wireToolbar() {
+    $('undoBtn').addEventListener('click', undo);
+
+    $('exportCsvBtn').addEventListener('click', exportCSV);
+
+    $('importCsvBtn').addEventListener('click', function () {
+      $('csvFileInput').click();
+    });
+    $('csvFileInput').addEventListener('change', function () {
+      if (this.files && this.files[0]) importCSV(this.files[0]);
+      this.value = '';
+    });
+
+    $('backupBtn').addEventListener('click', exportBackup);
+
+    $('restoreBtn').addEventListener('click', function () {
+      $('restoreFileInput').click();
+    });
+    $('restoreFileInput').addEventListener('change', function () {
+      if (this.files && this.files[0]) importBackup(this.files[0]);
+      this.value = '';
+    });
+
+    $('demoBtn').addEventListener('click', loadDemo);
+    $('printBtn').addEventListener('click', function () { window.print(); });
+    $('clearBtn').addEventListener('click', clearAll);
+
+    $('themeToggle').addEventListener('click', toggleTheme);
+
+    $('settingsBtn').addEventListener('click', function () {
+      renderAccountsList();
+      openModal('settingsModal');
+    });
+
+    $('emptyDemoBtn').addEventListener('click', loadDemo);
+  }
+
+  /* ------------------------------------------------------------------
+     27. МОДАЛЬНЫЕ ОКНА И НАСТРОЙКИ
+     ------------------------------------------------------------------ */
+  function wireModals() {
+    document.querySelectorAll('[data-close]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        closeModal(btn.dataset.close);
+      });
+    });
+
+    document.querySelectorAll('.modal-overlay').forEach(function (overlay) {
+      overlay.addEventListener('click', function (e) {
+        if (e.target === overlay) closeModal(overlay.id);
+      });
+    });
+
+    $('editForm').addEventListener('submit', saveEdit);
+
+    document.querySelectorAll('.theme-option').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        if (btn.dataset.themeValue === state.settings.theme) return;
+        snapshot();
+        state.settings.theme = btn.dataset.themeValue;
+        applyTheme();
+        persist();
+        renderCharts();
+      });
+    });
+
+    $('currencySelect').addEventListener('change', function () {
+      snapshot();
+      state.settings.currency = this.value;
+      persist();
+      applyCurrencyUI();
+      renderAll();
+      toast('Валюта изменена: ' + currency().symbol + ' (' + currency().code + ')', 'success');
+    });
+
+    $('addAccountBtn').addEventListener('click', addAccount);
+    $('newAccountInput').addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        addAccount();
+      }
+    });
+    $('accountsList').addEventListener('click', function (e) {
+      const btn = e.target.closest('[data-account]');
+      if (btn) deleteAccount(btn.dataset.account);
+    });
+
+    $('settingsBackupBtn').addEventListener('click', exportBackup);
+    $('settingsRestoreBtn').addEventListener('click', function () {
+      $('restoreFileInput').click();
+    });
+    $('settingsClearBtn').addEventListener('click', clearAll);
+  }
+
+  /* ------------------------------------------------------------------
+     28. ГОРЯЧИЕ КЛАВИШИ
+     ------------------------------------------------------------------ */
+  function wireHotkeys() {
+    document.addEventListener('keydown', function (e) {
+      const active = document.activeElement;
+      const tag = active ? active.tagName : '';
+      const inField = tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA';
+
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
+        e.preventDefault();
+        undo();
+        return;
+      }
+
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.modal-overlay.open').forEach(function (overlay) {
+          closeModal(overlay.id);
+        });
+        return;
+      }
+
+      if (inField) return;
+
+      if (e.key === '/') {
+        e.preventDefault();
+        $('searchInput').focus();
+        return;
+      }
+
+      if (e.key.toLowerCase() === 'n') {
+        e.preventDefault();
+        $('fAmount').focus();
+        return;
+      }
+
+      if (e.key.toLowerCase() === 't') {
+        toggleTheme();
+      }
+    });
+  }
+
+  /* ------------------------------------------------------------------
+     29. ПЕРЕРИСОВКА ГРАФИКОВ ПРИ РЕСАЙЗЕ
+     ------------------------------------------------------------------ */
+  function wireResize() {
+    window.addEventListener('resize', function () {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(renderCharts, 150);
+    });
+  }
+
+  /* ------------------------------------------------------------------
+     30. ИНИЦИАЛИЗАЦИЯ
+     ------------------------------------------------------------------ */
+  function init() {
+    loadState();
+
+    applyTheme();
+    applyCurrencyUI();
+    fillCategorySelect($('fCategory'), formType, null);
+    fillAccountSelects();
+    fillCategoryFilter();
+
+    $('fDate').value = todayISO();
+    $('todayLabel').textContent = new Date().toLocaleDateString('ru-RU', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+
+    wireTypeToggles();
+    wireFilters();
+    wireTable();
+    wireToolbar();
+    wireModals();
+    wireHotkeys();
+    wireResize();
+
+    renderAll();
+
+    console.log('🏦 Папа-банк PRO запущен. Записей в базе: ' + state.rows.length);
+  }
+
+  init();
+})();
+</script>
 </body>
 </html>
